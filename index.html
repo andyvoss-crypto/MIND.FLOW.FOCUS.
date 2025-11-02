@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO-Politur: Meta Description hinzugefügt -->
+    <meta name="description" content="Dein interaktives Leitwerk für ein Gehirn-Upgrade. Entdecke die Symbiose von Achtsamkeit und Körper – und die Evidenz für deinen Fokus bei ADHS.">
+    <title>Mind.Flow.Focus: Dein Achtsamkeits-Guide</title>
+    
+    <!-- Lade Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lade Chart.js für die Evidenz-Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lade Inter-Schriftart -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Grundsetup für Dark Mode und Schriftart */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B1120; /* Ein sehr dunkles Blau, fast schwarz */
+            color: #cbd5e1; /* slate-300 */
+        }
+
+        /* "Krass" Dark Mode: Neon- & Glaseffekte */
+        .text-glow-cyan {
+            color: #67e8f9; /* cyan-300 */
+            text-shadow: 0 0 8px rgba(103, 232, 249, 0.5), 0 0 16px rgba(103, 232, 249, 0.3);
+        }
+        
+        .text-glow-violet {
+            color: #c4b5fd; /* violet-300 */
+            text-shadow: 0 0 8px rgba(196, 181, 253, 0.5), 0 0 16px rgba(196, 181, 253, 0.3);
+        }
+        
+        .card-glass {
+            background-color: rgba(30, 41, 59, 0.3); /* slate-800 mit Transparenz */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+            transition: all 0.3s ease;
+        }
+        
+        .card-glass:hover {
+            border-color: rgba(103, 232, 249, 0.5);
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.1);
+        }
+
+        /* Interaktives Gehirn: SVG-Stile */
+        .brain-svg {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .brain-base path {
+            fill: rgba(51, 65, 85, 0.4); /* slate-700 */
+            stroke: #475569; /* slate-600 */
+            stroke-width: 1;
+        }
+        
+        .brain-highlight {
+            fill: none;
+            stroke-width: 3;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        /* Aktive Zustände für das Gehirn-Diagramm */
+        .brain-highlight.pfc { stroke: #67e8f9; } /* cyan */
+        .brain-highlight.body { stroke: #a78bfa; } /* violet */
+        .brain-highlight.adhd { stroke: #fde047; } /* yellow */
+        
+        .brain-highlight.active {
+            opacity: 1;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+        
+        .brain-btn {
+            background-color: rgba(51, 65, 85, 0.5); /* slate-700 */
+            transition: all 0.3s ease;
+        }
+        
+        .brain-btn.active, .brain-btn:hover {
+            background-color: #0B1120; /* Basis-BG */
+            color: #fff;
+            /* UI-Politur: Verwende den Glow für den aktiven Zustand, nicht nur für den Hover */
+            box-shadow: inset 0 0 0 2px #67e8f9; /* cyan-300 */
+        }
+
+        /* UI-Politur: Puls-Animation für interaktive Elemente (Checklisten-Wunsch) */
+        @keyframes pulse-shadow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(103, 232, 249, 0); /* cyan-300 transparent */
+            }
+            50% {
+                box-shadow: 0 0 15px 3px rgba(103, 232, 249, 0.4); /* cyan-300 glow */
+            }
+        }
+        .interactive-hint-pulse {
+            animation: pulse-shadow 3s infinite ease-in-out;
+        }
+
+
+        /* Scroll-Animation */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .reveal-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* A11y-Politur: Respektiert "Bewegung reduzieren" (Checklisten-Wunsch) */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-on-scroll {
+                transition: none;
+                opacity: 1;
+                transform: none;
+            }
+            /* Stoppt die neue Puls-Animation */
+            .interactive-hint-pulse {
+                animation: none;
+            }
+            /* Stoppt die Hero-Pfeil-Animation */
+            .animate-bounce {
+                animation: none;
+            }
+            /* Stoppt die Atem-Animation */
+            #breathing-circle.breathing {
+                animation: none;
+            }
+        }
+
+        /* Atem-Applet */
+        #breathing-circle {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #0e7490, #0B1120); /* cyan-700 zu BG */
+            border: 2px solid #67e8f9;
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.5);
+            transition: transform 4s ease-in-out, opacity 0.5s ease;
+        }
+        
+        #breathing-circle.breathing {
+            animation: breathe 8s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0% { transform: scale(0.9); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(0.9); }
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- HERO-SEKTION -->
+    <section class="h-screen flex flex-col justify-center items-center text-center p-4 reveal-on-scroll visible">
+        <h1 class="text-6xl md:text-9xl font-black tracking-tighter text-glow-cyan">
+            MIND.FLOW.FOCUS.
+        </h1>
+        <p class="text-xl md:text-2xl text-slate-300 mt-4 max-w-2xl">
+            Dein interaktives Leitwerk für ein Gehirn-Upgrade. Entdecke die Symbiose von Achtsamkeit und Körper – und die Evidenz für deinen Fokus.
+        </p>
+        <a href="#symbiose" class="mt-12 text-2xl animate-bounce">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-glow-cyan">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+        </a>
+    </section>
+
+    <!-- SEKTION 1: DIE SYMBIOSE (Interaktives Gehirn) -->
+    <section id="symbiose" class="py-24 px-4 min-h-screen">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4 reveal-on-scroll">DIE SYMBIOSE: <span class="text-glow-violet">DEIN GEHIRN & DU</span></h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-16 text-slate-400 reveal-on-scroll">
+                Achtsamkeit ist keine vage Idee. Es ist ein direktes Training für dein Gehirn. Hier siehst du, wie alles zusammenhängt. Wähle ein Thema, um die Gehirn-Scan-Analyse zu starten.
+            </p>
+            
+            <div class="flex flex-col lg:flex-row gap-12 items-center">
+                
+                <!-- Linke Seite: Interaktives Gehirn-SVG -->
+                <div class="w-full lg:w-1/2 reveal-on-scroll">
+                    <svg class="brain-svg" viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
+                        <g class="brain-base">
+                            <!-- Vereinfachte Gehirnform -->
+                            <path d="M110.8,5.3C87.4,0.4,63.6,5.6,44.9,20.5C26.2,35.4,13.6,58,11.3,82.6c-2.3,24.6,4.6,49.2,20.4,67.6
+                                c15.8,18.4,39.1,28.8,63.9,28.5c24.8-0.3,49.1-11.2,64.7-30.2c15.6-19,22.2-44.5,19.3-69.5C176.7,54,159.2,29,139,15.1
+                                C131.2,9.6,120.9,6.3,110.8,5.3z M117.1,170.8c-22.3,0.3-43.9-9.1-58.4-25.9C44.3,128.1,38,105.7,39.9,83
+                                c1.9-22.7,13.2-43.2,29.9-56.5C86.5,12.9,109.8,7.3,132.8,11.7c23,4.3,42.5,21,50.8,43.2c8.3,22.2,4.8,47.9-9.1,66.8
+                                C160.7,150.6,139.3,170.5,117.1,170.8z"/>
+                            <!-- Stamm -->
+                            <path d="M78.6,163.5c-4.3-1.4-8.3-3.6-12-6.5c-5.7-4.5-9.8-10.4-11.7-17.1c-1.9-6.7-1.5-13.8,1.1-20.2
+                                c2.6-6.4,7.4-11.9,13.6-15.5c0,0,0,0,0,0c1.7-1,3.5-1.8,5.3-2.6c-0.9,2.6-1.5,5.2-1.9,7.9c-0.7,5.5,0,11.1,1.9,16.4
+                                c1.9,5.3,5.1,10.2,9.2,14.2c4.1,4.1,9.2,7.2,14.7,9c5.5,1.8,11.3,2.2,16.9,1.3c2.7-0.4,5.4-1.1,7.9-1.9
+                                c-3.9,2.1-7.9,3.8-12.1,5.1C94.5,160.6,86.5,164.9,78.6,163.5z"/>
+                        </g>
+                        <!-- Highlight-Pfade (anpassbar) -->
+                        <path class="brain-highlight pfc" id="svg-path-pfc" d="M110.8,5.3C87.4,0.4,63.6,5.6,44.9,20.5C33.2,30.3,24.1,43.3,20.4,57.5"/>
+                        <path class="brain-highlight body" id="svg-path-body" d="M78.6,163.5c-4.3-1.4-8.3-3.6-12-6.5c-5.7-4.5-9.8-10.4-11.7-17.1c-1.9-6.7-1.5-13.8,1.1-20.2"/>
+                        <path class="brain-highlight adhd" id="svg-path-adhd" d="M39.9,83c1.9-22.7,13.2-43.2,29.9-56.5 M132.8,11.7c23,4.3,42.5,21,50.8,43.2"/>
+                    </svg>
+                </div>
+                
+                <!-- Rechte Seite: Content-Paneele -->
+                <div class="w-full lg:w-1/2">
+                    <!-- Buttons -->
+                    <!-- A11y-Politur: role="tablist" für Button-Gruppe -->
+                    <div class="flex flex-col sm:flex-row gap-4 mb-6 reveal-on-scroll" role="tablist">
+                        <!-- A11y-Politur: role="tab", aria-selected und UI-Politur: interactive-hint-pulse hinzugefügt -->
+                        <button id="btn-topic-1" data-target="panel-topic-1" data-path="svg-path-pfc" class="brain-btn flex-1 p-4 rounded-lg font-semibold text-left active interactive-hint-pulse" role="tab" aria-selected="true">
+                            <span class="text-glow-cyan text-lg block">Was ist Achtsamkeit?</span>
+                            <span class="text-sm text-slate-400">Der Scan-Modus für dein Hirn.</span>
+                        </button>
+                        <button id="btn-topic-2" data-target="panel-topic-2" data-path="svg-path-body" class="brain-btn flex-1 p-4 rounded-lg font-semibold text-left interactive-hint-pulse" role="tab" aria-selected="false">
+                            <span class="text-glow-violet text-lg block">Symbiose mit dem Körper?</span>
+                            <span class="text-sm text-slate-400">Stress-System runterfahren.</span>
+                        </button>
+                    </div>
+                     <button id="btn-topic-3" data-target="panel-topic-3" data-path="svg-path-adhd" class="brain-btn w-full p-4 rounded-lg font-semibold text-left mb-6 reveal-on-scroll interactive-hint-pulse" role="tab" aria-selected="false">
+                        <span class="text-yellow-300 text-lg block">Wie hilft es bei ADHS?</span>
+                        <span class="text-sm text-slate-400">Den "Direktor" im Gehirn trainieren.</span>
+                    </button>
+                    
+                    <!-- Content -->
+                    <div class="card-glass p-6 rounded-lg min-h-[300px] reveal-on-scroll">
+                        <!-- A11y-Politur: role="tabpanel" hinzugefügt -->
+                        <div id="panel-topic-1" class="brain-panel" role="tabpanel">
+                            <h3 class="text-2xl font-bold text-glow-cyan mb-4">Scan-Modus: Aktiv</h3>
+                            <p class="text-lg leading-relaxed">
+                                Achtsamkeit ist die Superkraft, genau jetzt, in diesem Moment, voll da zu sein. Stell es dir vor wie den "Scan-Modus" in einem Spiel:
+                                <br><br>
+                                Du scannst, was du gerade denkst ("Oh, Gedanke an Pizza"), was du fühlst ("Hm, bin unruhig") und was du hörst (der Lüfter vom PC).
+                                <br><br>
+                                Der Clou: Du bewertest es nicht. Du nimmst es nur wahr. Du bist der <span class="font-bold text-white">Beobachter</span> deiner Gedanken, nicht ihr Gefangener.
+                            </p>
+                        </div>
+                        <div id="panel-topic-2" class="brain-panel hidden" role="tabpanel">
+                            <h3 class="text-2xl font-bold text-glow-violet mb-4">Körper-Symbiose: Aktiv</h3>
+                            <p class="text-lg leading-relaxed">
+                                Dein Körper und dein Gehirn sind in einer ständigen "Symbiose" – sie reden nonstop miteinander.
+                                <br><br>
+                                Bei Stress (z.B. vor einer Prüfung) schreit dein Gehirn "PANIK!" an den Körper. Dein Körper gehorcht: Herz rast, Atmung wird flach, Muskeln spannen an.
+                                <br><br>
+                                Achtsamkeit kehrt das um. Wenn du deine Atmung bewusst verlangsamst (eine Körper-Aktion), sendet dein Körper das Signal "Alles cool" zurück ans Gehirn. Das Gehirn fährt das Stresslevel (Cortisol) runter. Du übernimmst das Steuer.
+                            </p>
+                        </div>
+                        <div id="panel-topic-3" class="brain-panel hidden" role="tabpanel">
+                            <h3 class="text-2xl font-bold text-yellow-300 mb-4">ADHS-Fokus: Aktiv</h3>
+                            <p class="text-lg leading-relaxed">
+                                Das ist die Evidenz, die du gesucht hast. Stell dir dein Gehirn vereinfacht vor:
+                                <br><br>
+                                1. <span class="font-bold text-white">Das Impuls-Zentrum (Limbisches System):</span> Ist laut, schnell und will sofort Belohnung. ("Spring auf! Check das Handy! Sag was!")
+                                <br>
+                                2. <span class="font-bold text-white">Der Direktor (Präfrontaler Kortex/PFC):</span> Ist der Boss für Fokus, Planung und Impulskontrolle.
+                                <br><br>
+                                Bei ADHS ist der "Direktor" oft überstimmt. Achtsamkeit ist pures <span class="font-bold text-white">Krafttraining für diesen Direktor</span>. Jedes Mal, wenn du einen Impuls bemerkst und dich *entscheidest*, nicht darauf zu reagieren, machst du ein "Bizeps-Curl" für deinen PFC.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKTION 2: DIE EVIDENZ (Chart.js) -->
+    <section id="evidenz" class="py-24 px-4 bg-slate-900/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4 reveal-on-scroll">DIE EVIDENZ: <span class="text-glow-cyan">FOKUS-TRAINING IM SCAN</span></h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-16 text-slate-400 reveal-on-scroll">
+                Das ist kein Glaube, das ist Neurobiologie. Studien (Beweise) mit Gehirnscans (fMRI) zeigen, dass sich das Gehirn durch Achtsamkeitstraining physisch verändert (Neuroplastizität). Es ist wie ein Skill, den du leveln kannst.
+            </p>
+
+            <div class="flex flex-col lg:flex-row gap-12 items-center">
+                <!-- Linke Seite: Chart.js Radar Chart -->
+                <div class="w-full lg:w-1/2 card-glass p-6 rounded-lg reveal-on-scroll">
+                    <h3 class="text-xl font-bold text-center text-white mb-4">Gehirn-Balance (Beispiel-Analyse)</h3>
+                    <div class="h-[300px] md:h-[400px]">
+                        <canvas id="adhd-chart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-slate-400 mt-4">
+                        Diese Grafik zeigt, wie Achtsamkeit das Gleichgewicht verschiebt: weg von reaktiver Impulsivität, hin zu bewusstem Fokus und besserer Emotionssteuerung.
+                    </p>
+                </div>
+                
+                <!-- Rechte Seite: Beweis-Karten -->
+                <div class="w-full lg:w-1/2 space-y-6">
+                    <div class="card-glass p-6 rounded-lg reveal-on-scroll">
+                        <h3 class="text-2xl font-bold text-glow-cyan mb-2">BEWEIS 1: Der "Direktor" (PFC) wird stärker</h3>
+                        <p class="text-slate-300">
+                            Wissenschaftler haben bewiesen, dass schon 8 Wochen Achtsamkeitstraining die Dichte der grauen Substanz im Präfrontalen Kortex (PFC) erhöhen. Dein "Direktor" bekommt also buchstäblich mehr Power. Das hilft dir, dich besser zu konzentrieren und nicht auf jeden Impuls anzuspringen.
+                        </p>
+                    </div>
+                     <div class="card-glass p-6 rounded-lg reveal-on-scroll">
+                        <h3 class="text-2xl font-bold text-glow-violet mb-2">BEWEIS 2: Die "Alarmglocke" wird leiser</h3>
+                        <p class="text-slate-300">
+                            Gleichzeitig schrumpft durch das Training die Amygdala (dein "Alarm-Zentrum"). Das ist der Teil, der bei Stress oder starken Gefühlen "PANIK!" ruft. Eine kleinere Amygdala bedeutet: Du bleibst cooler, reagierst gelassener und wirst seltener von Gefühlen überrannt.
+                        </p>
+                    </div>
+                     <div class="card-glass p-6 rounded-lg reveal-on-scroll">
+                        <h3 class="text-2xl font-bold text-yellow-300 mb-2">BEWEIS 3: Bessere Verbindung</h3>
+                        <p class="text-slate-300">
+                            Die "Datenleitung" zwischen dem ruhigen Direktor (PFC) und dem lauten Alarm-Zentrum (Amygdala) wird verbessert. Der Boss kann also besser beim Alarm-Zentrum "anrufen" und sagen: "Hey, alles okay, fahr mal runter." Das ist der Kern von besserer Selbstregulation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKTION 3: DIE PRAXIS (Atem-Mission) -->
+    <section id="praxis" class="py-24 px-4 min-h-[90vh] flex items-center">
+        <div class="max-w-3xl mx-auto text-center">
+            <!-- Feature-Update: Titel geändert -->
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4 reveal-on-scroll">DEINE MISSION: <span class="text-glow-cyan">DER ATEM-ANKER</span></h2>
+            <p class="text-lg text-center max-w-3xl mx-auto mb-16 text-slate-400 reveal-on-scroll">
+                Genug Theorie. Das hier ist ein praktisches Leitwerk. Deine Trainings-Session startet jetzt. Finde eine ruhige Position und wähle deine Missionsdauer.
+            </p>
+            
+            <div class="card-glass p-8 md:p-12 rounded-lg reveal-on-scroll">
+                <div class="flex flex-col items-center justify-center">
+                    
+                    <!-- Feature-Update: Timer startet bei 0:00, wird durch Klick gesetzt -->
+                    <div id="timer-display" class="text-7xl font-black text-white mb-6">0:00</div>
+                    
+                    <div id="breathing-circle" class="rounded-full flex items-center justify-center mb-8">
+                        <span id="instruction-text" class="text-xl font-bold text-white">WÄHLE ZEIT</span>
+                    </div>
+
+                    <!-- Feature-Update: 1-Minuten-Button ersetzt durch Button-Gruppe -->
+                    <div id="mission-controls" class="flex flex-col sm:flex-row gap-4">
+                        <button data-duration="60" class="mission-btn px-8 py-3 bg-cyan-600 text-white text-lg font-bold rounded-lg shadow-lg transition-all duration-300 hover:bg-cyan-500 hover:shadow-cyan-500/50 transform hover:scale-105 active:scale-95 interactive-hint-pulse">
+                            1 Minute
+                        </button>
+                        <button data-duration="180" class="mission-btn px-8 py-3 bg-violet-600 text-white text-lg font-bold rounded-lg shadow-lg transition-all duration-300 hover:bg-violet-500 hover:shadow-violet-500/50 transform hover:scale-105 active:scale-95 interactive-hint-pulse">
+                            3 Minuten
+                        </button>
+                        <button data-duration="300" class="mission-btn px-8 py-3 bg-fuchsia-600 text-white text-lg font-bold rounded-lg shadow-lg transition-all duration-300 hover:bg-fuchsia-500 hover:shadow-fuchsia-500/50 transform hover:scale-105 active:scale-95 interactive-hint-pulse">
+                            5 Minuten
+                        </button>
+                    </div>
+                    
+                    <div id="end-message" class="hidden mt-6">
+                        <p class="text-2xl font-bold text-glow-cyan">MISSION ERFOLGREICH!</p>
+                        <!-- Feature-Update: Text angepasst -->
+                        <p class="text-slate-300">Gut gemacht. Du hast gerade deinen "Direktor" trainiert. Klicke, um eine neue Mission zu starten.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKTION 4: FAZIT (Das Leben ist schön) -->
+    <section id="fazit" class="py-32 px-4 text-center bg-slate-900/50">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 mb-8 reveal-on-scroll">
+                DAS LEBEN IST SCHÖN.
+                <br>
+                SEI DABEI.
+            </h2>
+            <p class="text-xl text-slate-300 leading-relaxed reveal-on-scroll">
+                Dein Gehirn ist das mächtigste Tool, das du besitzt. Du bist ihm nicht ausgeliefert – du kannst es trainieren. Achtsamkeit ist der Skill, um aus dem Autopiloten auszusteigen und dein Leben bewusst zu steuern.
+                <br><br>
+                Es ist kein "Fix" für ADHS, sondern ein mächtiger Skill, um damit zu surfen. Wie ein Cheat-Code, den du dir selbst programmierst.
+                <br><br>
+                Du hast alles, was du brauchst. Fang einfach an.
+            </p>
+        </div>
+    </section>
+    
+    <!-- FOOTER-UPDATE: Hier habe ich deine Gedanken eingefügt -->
+    <footer class="text-center py-8 text-sm text-slate-500 px-4">
+        <div class="max-w-xl mx-auto text-slate-400 text-base mb-6 reveal-on-scroll">
+            <p class="font-bold text-glow-cyan mb-2 text-lg">Ein Hinweis zum Timer:</p>
+            <p>Am Anfang hilft dir dieser Timer, eine Routine aufzubauen. Je öfter du übst, desto mehr wird dieser Skill ein Teil von dir – er geht dir in Leib und Seele über. Irgendwann brauchst du den Timer nicht mehr.</p>
+            <p class="mt-3 italic">Denn was du oft machst, das lernst du. Was du von dir denkst, das wirst du. Und was du liebst, das wird dich umgeben.</p>
+        </div>
+        <p class="reveal-on-scroll">Ein interaktives Leitwerk. © 2025. Alle Rechte vorbehalten.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. SCROLL-ANIMATION-OBSERVER ---
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            const targets = document.querySelectorAll('.reveal-on-scroll');
+            
+            const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            targets.forEach(target => {
+                if (isReducedMotion) {
+                    target.classList.add('visible');
+                    /* A11y-Politur: Puls-Animation bei reduce motion entfernen */
+                    target.classList.remove('interactive-hint-pulse');
+                } else {
+                    observer.observe(target);
+                }
+            });
+
+            // --- 2. INTERAKTIVES GEHIRN-DIAGRAMM ---
+            const brainBtns = document.querySelectorAll('.brain-btn');
+            const brainPanels = document.querySelectorAll('.brain-panel');
+            const brainPaths = document.querySelectorAll('.brain-highlight');
+
+            brainBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetPanelId = btn.getAttribute('data-target');
+                    const targetPathId = btn.getAttribute('data-path');
+
+                    // Alle zurücksetzen
+                    brainBtns.forEach(b => {
+                        b.classList.remove('active');
+                        b.setAttribute('aria-selected', 'false'); // A11y-Politur
+                    });
+                    brainPanels.forEach(p => p.classList.add('hidden'));
+                    brainPaths.forEach(p => p.classList.remove('active'));
+
+                    // Aktives Element setzen
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-selected', 'true'); // A11y-Politur
+                    document.getElementById(targetPanelId).classList.remove('hidden');
+                    document.getElementById(targetPathId).classList.add('active');
+                });
+            });
+            // Standardmäßig Topic 1 aktivieren
+            if (document.getElementById('btn-topic-1')) {
+                document.getElementById('btn-topic-1').click();
+            }
+
+            // --- 3. EVIDENZ-CHART (Chart.js) ---
+            const ctx = document.getElementById('adhd-chart');
+            if (ctx) {
+                new Chart(ctx.getContext('2d'), {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            'Fokus & Konzentration', 
+                            'Impulskontrolle', 
+                            'Emotionsregulation', 
+                            'Stress-Level', 
+                            'Reaktivität'
+                        ],
+                        datasets: [{
+                            label: 'Vor dem Training (Beispiel)',
+                            data: [3, 2, 4, 8, 9],
+                            fill: true,
+                            backgroundColor: 'rgba(196, 181, 253, 0.2)', // violet-300
+                            borderColor: '#c4b5fd', // violet-300
+                            pointBackgroundColor: '#c4b5fd',
+                            pointBorderColor: '#fff'
+                        }, {
+                            label: 'Nach 8 Wochen (Beispiel)',
+                            data: [7, 6, 7, 4, 4],
+                            fill: true,
+                            backgroundColor: 'rgba(103, 232, 249, 0.2)', // cyan-300
+                            borderColor: '#67e8f9', // cyan-300
+                            pointBackgroundColor: '#67e8f9',
+                            pointBorderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#cbd5e1' // slate-300
+                                }
+                            },
+                            /* A11y-Politur: Tooltips für Chart.js lesbar machen */
+                            tooltip: {
+                                callbacks: {
+                                    title: (tooltipItems) => {
+                                        // Stellt sicher, dass der Titel im Tooltip korrekt angezeigt wird
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        if (Array.isArray(label)) {
+                                            return label.join(' ');
+                                        } else {
+                                            return label;
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(71, 85, 105, 0.5)' }, // slate-600
+                                grid: { color: 'rgba(71, 85, 105, 0.5)' }, // slate-600
+                                pointLabels: {
+                                    color: '#cbd5e1', // slate-300
+                                    font: { size: 12 }
+                                },
+                                ticks: {
+                                    display: false,
+                                    stepSize: 2,
+                                    backdropColor: 'transparent'
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 10
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // --- 4. ATEM-MISSION-APPLET ---
+            const missionControl = document.getElementById('mission-controls');
+            const missionBtns = document.querySelectorAll('.mission-btn');
+            const timerDisplay = document.getElementById('timer-display');
+            const circle = document.getElementById('breathing-circle');
+            const instruction = document.getElementById('instruction-text');
+            const endMessage = document.getElementById('end-message');
+            
+            // BUGFIX: Timer-Variablen auf null initialisieren
+            let timerInterval = null;
+            let breathingTimeout = null;
+            let breathInterval = null;
+            let timeLeft = 0;
+
+            // BUGFIX: Funktion zum Stoppen aller laufenden Timer
+            function stopAllTimers() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                if (breathInterval) {
+                    clearInterval(breathInterval);
+                    breathInterval = null;
+                }
+                if (breathingTimeout) {
+                    clearTimeout(breathingTimeout);
+                    breathingTimeout = null;
+                }
+            }
+            
+            function startMission(durationInSeconds) {
+                // BUGFIX: Alle alten Timer sicher stoppen
+                stopAllTimers();
+                
+                timeLeft = durationInSeconds;
+                
+                // UI-Zustand 'Läuft'
+                missionControl.classList.add('hidden'); // Buttons ausblenden
+                endMessage.classList.add('hidden');
+                updateTimerDisplay(); // Timer sofort anzeigen
+                instruction.textContent = 'Atme ein...';
+                circle.classList.add('breathing');
+                
+                // Atmungs-Anweisungs-Loop
+                function breathLoop() {
+                    instruction.textContent = 'Atme ein...';
+                    breathingTimeout = setTimeout(() => {
+                        instruction.textContent = '...und atme aus';
+                    }, 4000); // 4s einatmen
+                }
+                breathLoop(); // Sofort starten
+                breathInterval = setInterval(breathLoop, 8000); // 8s Zyklus
+                
+                // Timer-Interval
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        // BUGFIX: Alle Timer stoppen, wenn die Zeit abgelaufen ist
+                        stopAllTimers();
+                        
+                        // Mission Ende
+                        timerDisplay.textContent = '0:00';
+                        instruction.textContent = 'GESCHAFFT!';
+                        circle.classList.remove('breathing');
+                        missionControl.classList.remove('hidden'); // Buttons wieder einblenden
+                        endMessage.classList.remove('hidden');
+                    }
+                }, 1000);
+            }
+            
+            function updateTimerDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                timerDisplay.textContent = `${minutes}:${seconds}`;
+            }
+
+            missionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const duration = parseInt(btn.getAttribute('data-duration'), 10);
+                    startMission(duration);
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
+
