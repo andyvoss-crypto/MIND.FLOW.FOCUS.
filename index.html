@@ -19,22 +19,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <!-- Lade ionicons für das Atem-Handbuch -->
-    <!-- HIER WAR DER FEHLER: type"module" wurde zu type="module" korrigiert -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
     <style>
-        /* === 1. GRUNDSETUP === */
+        /* Grundsetup für Dark Mode und Schriftart */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0B1120; /* Ein sehr dunkles Blau, fast schwarz */
             color: #cbd5e1; /* slate-300 */
-            padding-top: 80px; /* Platz für sticky Nav-Leiste */
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            /* Padding oben, damit die sticky Nav-Leiste nichts verdeckt */
+            padding-top: 80px; 
         }
 
-        /* === 2. "KRASS" DARK MODE: GLOW & GLAS-EFFEKTE === */
+        /* "Krass" Dark Mode: Neon- & Glaseffekte */
         .text-glow-cyan {
             color: #67e8f9; /* cyan-300 */
             text-shadow: 0 0 8px rgba(103, 232, 249, 0.5), 0 0 16px rgba(103, 232, 249, 0.3);
@@ -45,11 +43,6 @@
             text-shadow: 0 0 8px rgba(196, 181, 253, 0.5), 0 0 16px rgba(196, 181, 253, 0.3);
         }
         
-        .text-glow-yellow {
-            color: #fde047; /* yellow-300 */
-            text-shadow: 0 0 8px rgba(253, 224, 71, 0.5), 0 0 16px rgba(253, 224, 71, 0.3);
-        }
-
         .card-glass {
             background-color: rgba(30, 41, 59, 0.3); /* slate-800 mit Transparenz */
             backdrop-filter: blur(12px);
@@ -63,35 +56,7 @@
             box-shadow: 0 0 20px rgba(103, 232, 249, 0.1);
         }
 
-        /* === 3. NAV-BAR & ALTERS-UMSCHALTER === */
-        .age-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100; /* Muss über allem sein */
-            background-color: rgba(11, 17, 32, 0.8); /* body-BG mit Transparenz */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
-        }
-        .age-nav-button {
-            padding: 1rem 0.5rem;
-            text-align: center;
-            font-size: 0.875rem; /* 14px */
-            font-weight: 700;
-            color: #94a3b8; /* slate-400 */
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .age-nav-button:hover { color: #e2e8f0; /* slate-200 */ }
-        .age-nav-button.active {
-            color: #67e8f9; /* cyan-300 */
-            border-bottom-color: #67e8f9;
-        }
-        .content-wrapper.hidden { display: none; }
-
-        /* === 4. INTERAKTIVES GEHIRN-SVG === */
+        /* Interaktives Gehirn: SVG-Stile */
         .brain-svg {
             width: 100%;
             max-width: 400px;
@@ -99,38 +64,104 @@
             stroke-linecap: round;
             stroke-linejoin: round;
         }
+        
         .brain-base path {
             fill: rgba(51, 65, 85, 0.4); /* slate-700 */
             stroke: #475569; /* slate-600 */
             stroke-width: 1;
         }
+        
         .brain-highlight {
             fill: none;
             stroke-width: 3;
             opacity: 0;
             transition: all 0.5s ease;
         }
+        
+        /* Aktive Zustände für das Gehirn-Diagramm */
         .brain-highlight.pfc { stroke: #67e8f9; } /* cyan */
         .brain-highlight.body { stroke: #a78bfa; } /* violet */
-        .brain-highlight.handbuch { stroke: #fde047; } /* yellow */
+        .brain-highlight.handbook { stroke: #fde047; } /* yellow */
+        
         .brain-highlight.active {
             opacity: 1;
             filter: drop-shadow(0 0 10px currentColor);
         }
+        
         .brain-btn {
             background-color: rgba(51, 65, 85, 0.5); /* slate-700 */
             transition: all 0.3s ease;
         }
+        
         .brain-btn.active, .brain-btn:hover {
             background-color: #0B1120; /* Basis-BG */
             color: #fff;
+            /* UI-Politur: Verwende den Glow für den aktiven Zustand, nicht nur für den Hover */
             box-shadow: inset 0 0 0 2px #67e8f9; /* cyan-300 */
         }
-        .brain-btn.active.handbuch-btn, .brain-btn.handbuch-btn:hover {
-             box-shadow: inset 0 0 0 2px #fde047; /* yellow-300 */
+        
+        /* Spezieller Glow für Handbuch-Button */
+        .brain-btn.handbook-btn.active, .brain-btn.handbook-btn:hover {
+            box-shadow: inset 0 0 0 2px #fde047; /* yellow-300 */
+        }
+
+
+        /* UI-Politur: Puls-Animation für interaktive Elemente (Checklisten-Wunsch) */
+        @keyframes pulse-shadow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(103, 232, 249, 0); /* cyan-300 transparent */
+            }
+            50% {
+                box-shadow: 0 0 15px 3px rgba(103, 232, 249, 0.4); /* cyan-300 glow */
+            }
+        }
+        .interactive-hint-pulse {
+            animation: pulse-shadow 3s infinite ease-in-out;
+        }
+
+
+        /* Scroll-Animation */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
-        /* === 5. ATEM-ANKER (APP 1) === */
+        .reveal-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* A11y-Politur: Respektiert "Bewegung reduzieren" (Checklisten-Wunsch) */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-on-scroll {
+                transition: none;
+                opacity: 1;
+                transform: none;
+            }
+            /* Stoppt die neue Puls-Animation */
+            .interactive-hint-pulse {
+                animation: none;
+            }
+            /* Stoppt die Hero-Pfeil-Animation */
+            .animate-bounce {
+                animation: none;
+            }
+            /* Stoppt die Atem-Animation */
+            .breathing-circle.breathing {
+                animation: none;
+            }
+            /* Stoppt alle Handbuch-Animationen */
+            .handbook-visual-guide-circle, .handbook-nadi-channel, .handbook-card, .handbook-card-intro,
+            .handbook-animate-breathe-in, .handbook-animate-breathe-out, .handbook-animate-breathe-hold,
+            .handbook-animate-pulse-out, .handbook-animate-pulse-in, .handbook-animate-vibrate,
+            .handbook-modal-backdrop, .handbook-modal-content-container {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* Atem-Applet (Sektion 3) */
         .breathing-circle {
             width: 150px;
             height: 150px;
@@ -139,52 +170,57 @@
             box-shadow: 0 0 20px rgba(103, 232, 249, 0.5);
             transition: transform 4s ease-in-out, opacity 0.5s ease;
         }
+        
         .breathing-circle.breathing {
             animation: breathe 8s ease-in-out infinite;
         }
+        
         @keyframes breathe {
             0% { transform: scale(0.9); }
             50% { transform: scale(1.2); }
             100% { transform: scale(0.9); }
         }
-        
-        /* === 6. ATEM-HANDBUCH (APP 2) STILE === */
-        /* Modal-Backdrop */
-        .handbook-modal-backdrop {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-        .handbook-modal-content-container {
-            animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .handbook-modal-backdrop.closing {
-            animation: fadeOut 0.2s ease-in forwards;
-        }
-        .handbook-modal-content-container.closing {
-            animation: scaleOut 0.2s ease-in forwards;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes scaleOut { from { transform: scale(1); opacity: 1; } to { transform: scale(0.95); opacity: 0; } }
 
-        /* Modal-Tabs */
-        .handbook-tab-active { @apply bg-teal-600 text-white; }
-        .handbook-tab-inactive { @apply bg-gray-700 text-gray-200 hover:bg-gray-600; }
-        .handbook-tab-content.hidden { display: none; }
-        #handbook-praxis-footer-modal-sigh,
-        #handbook-praxis-footer-modal-zwerchfell,
-        #handbook-praxis-footer-modal-lippenbremse {
+        /* Alters-Umschalter */
+        .age-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+            background-color: rgba(11, 17, 32, 0.8); /* body-BG mit Transparenz */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5); /* slate-700 */
+        }
+        .age-nav-button {
+            padding: 1rem 0.5rem; /* Mehr Klickfläche, besonders mobil */
+            text-align: center;
+            font-size: 0.875rem; /* 14px */
+            font-weight: 700;
+            color: #94a3b8; /* slate-400 */
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .age-nav-button:hover {
+            color: #e2e8f0; /* slate-200 */
+        }
+        
+        .age-nav-button.active {
+            color: #67e8f9; /* cyan-300 */
+            border-bottom-color: #67e8f9;
+        }
+        
+        .content-wrapper.hidden {
             display: none;
         }
 
-        /* Modal-Scrollbar */
-        .handbook-modal-content::-webkit-scrollbar { width: 8px; }
-        .handbook-modal-content::-webkit-scrollbar-thumb { background-color: #0d9488; border-radius: 10px; }
-        .handbook-modal-content::-webkit-scrollbar-track { background-color: #374151; }
+        /* --- STILE FÜR INTEGRIERTES ATEM-HANDBUCH --- */
 
-        /* Handbuch-Karten-Hover */
+        /* Handbuch Karten-Stile */
         .handbook-card {
-            @apply bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col transition-all duration-300 ease-out h-full;
+            @apply bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col transition-all duration-300 ease-out;
         }
         .handbook-card-teal:hover {
             transform: translateY(-4px);
@@ -202,9 +238,40 @@
             transform: translateY(-4px);
             box-shadow: 0 0 20px 0 rgba(107, 114, 128, 0.5); /* gray-500 */
         }
+        .handbook-card-intro:hover {
+            transform: scale(1.03);
+            border-color: rgba(107, 114, 128, 0.7);
+        }
+        
+        /* Handbuch Modal-Stile */
+        .handbook-modal-backdrop {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        .handbook-modal-content-container {
+            animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .handbook-modal-backdrop.closing {
+            animation: fadeOut 0.2s ease-in forwards;
+        }
+        .handbook-modal-content-container.closing {
+            animation: scaleOut 0.2s ease-in forwards;
+        }
+        
+        .handbook-tab-active { @apply bg-teal-600 text-white; }
+        .handbook-tab-inactive { @apply bg-gray-700 text-gray-200 hover:bg-gray-600; }
+        
+        /* Scrollbar-Styling (für Modale) */
+        .handbook-modal-content::-webkit-scrollbar { width: 8px; }
+        .handbook-modal-content::-webkit-scrollbar-thumb { background-color: #0d9488; border-radius: 10px; }
+        .handbook-modal-content::-webkit-scrollbar-track { background-color: #374151; }
 
-        /* Handbuch-Visualizer */
-        .visual-guide-circle {
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes scaleOut { from { transform: scale(1); opacity: 1; } to { transform: scale(0.95); opacity: 0; } }
+
+        /* Handbuch Visualizer-Stile */
+        .handbook-visual-guide-circle {
             width: 150px;
             height: 150px;
             border-radius: 50%;
@@ -218,80 +285,47 @@
         @keyframes breathe-in { from { transform: scale(1); } to { transform: scale(1.5); } }
         @keyframes breathe-out { from { transform: scale(1.5); } to { transform: scale(1); } }
         @keyframes breathe-hold { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
-        .animate-breathe-in { animation-name: breathe-in; animation-timing-function: ease-in-out; animation-fill-mode: forwards; }
-        .animate-breathe-out { animation-name: breathe-out; animation-timing-function: ease-in-out; animation-fill-mode: forwards; }
-        .animate-breathe-hold { animation-name: breathe-hold; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+        .handbook-animate-breathe-in { animation-name: breathe-in; animation-timing-function: ease-in-out; animation-fill-mode: forwards; }
+        .handbook-animate-breathe-out { animation-name: breathe-out; animation-timing-function: ease-in-out; animation-fill-mode: forwards; }
+        .handbook-animate-breathe-hold { animation-name: breathe-hold; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
 
-        .nadi-container { display: flex; justify-content: space-around; align-items: center; width: 100%; }
-        .nadi-channel {
+        .handbook-nadi-container { display: flex; justify-content: space-around; align-items: center; width: 100%; }
+        .handbook-nadi-channel {
             width: 60px; height: 120px; border-radius: 30px;
             background-color: #374151; /* gray-700 */
             opacity: 0.2;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
-        .nadi-channel.active { opacity: 1; transform: scale(1.1); }
-        .nadi-left { background-color: #3b82f6; } /* blue-500 */
-        .nadi-right { background-color: #a855f7; } /* purple-500 */
+        .handbook-nadi-channel.active { opacity: 1; transform: scale(1.1); }
+        .handbook-nadi-left { background-color: #3b82f6; } /* blue-500 */
+        .handbook-nadi-right { background-color: #a855f7; } /* purple-500 */
 
         @keyframes pulse-breath {
             0% { transform: scale(1); opacity: 0.7; }
             30% { transform: scale(1.3); opacity: 1; }
             100% { transform: scale(1); opacity: 0.7; }
         }
-        .animate-pulse-out { animation-name: pulse-breath; animation-timing-function: ease-out; animation-duration: 0.3s; }
-        .animate-pulse-in { animation-name: pulse-breath; animation-timing-function: ease-out; animation-duration: 0.3s; animation-direction: reverse; }
+        .handbook-animate-pulse-out { animation-name: pulse-breath; animation-timing-function: ease-out; animation-duration: 0.3s; }
+        .handbook-animate-pulse-in { animation-name: pulse-breath; animation-timing-function: ease-out; animation-duration: 0.3s; animation-direction: reverse; }
         
         @keyframes vibrate {
-            0% { transform: translate(0, 0); } 25% { transform: translate(1px, -1px); } 50% { transform: translate(-1px, 1px); }
-            75% { transform: translate(1px, 1px); } 100% { transform: translate(-1px, -1px); }
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(1px, -1px); }
+            50% { transform: translate(-1px, 1px); }
+            75% { transform: translate(1px, 1px); }
+            100% { transform: translate(-1px, -1px); }
         }
-        .animate-vibrate {
-            animation-name: vibrate; animation-duration: 0.1s; animation-iteration-count: infinite;
-        }
-
-        /* === 7. SCROLL-ANIMATION & BARRIEREFREIHEIT === */
-        .reveal-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        .handbook-animate-vibrate {
+            animation-name: vibrate;
+            animation-duration: 0.1s;
+            animation-iteration-count: infinite;
         }
         
-        .reveal-on-scroll.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        @keyframes pulse-shadow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(103, 232, 249, 0); }
-            50% { box-shadow: 0 0 15px 3px rgba(103, 232, 249, 0.4); }
-        }
-        .interactive-hint-pulse {
-            animation: pulse-shadow 3s infinite ease-in-out;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .reveal-on-scroll,
-            .handbook-modal-backdrop, .handbook-modal-content-container,
-            .animate-breathe-in, .animate-breathe-out, .animate-breathe-hold,
-            .animate-pulse-out, .animate-pulse-in, .animate-vibrate {
-                transition: none;
-                animation: none;
-                opacity: 1;
-                transform: none;
-            }
-            .interactive-hint-pulse, .animate-bounce, .breathing-circle.breathing {
-                animation: none;
-            }
-            .handbook-card:hover, .handbook-card-gray:hover {
-                 transform: none;
-                 box-shadow: none;
-            }
-        }
     </style>
 </head>
 <body class="overflow-x-hidden">
 
-    <!-- ALTERS-UMSCHALTER (NAV LEISTE) -->
+    <!-- ALTERS-UMSCHALTER (NAV-LEISTE) -->
     <nav class="age-nav">
         <div class="max-w-6xl mx-auto flex justify-center items-center gap-4 px-4">
             <button id="age-toggle-14" class="age-nav-button active" aria-selected="true">
@@ -303,14 +337,14 @@
         </div>
     </nav>
 
-    <!-- ===================================== -->
+    <!-- ======================================= -->
     <!-- ===== INHALT FÜR JUGENDLICHE (14+) ===== -->
-    <!-- ===================================== -->
+    <!-- ======================================= -->
     <div id="content-14" class="content-wrapper">
         
         <!-- HERO-SEKTION (14+) -->
         <section id="hero-14" class="h-screen flex flex-col justify-center items-center text-center p-4 reveal-on-scroll visible">
-            <!-- Mobile-Fix: text-4xl (kleinste) -> sm:text-6xl -> md:text-8xl + break-words -->
+            <!-- Mobile-Überschrift-Fix -->
             <h1 class="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter text-glow-cyan w-full break-words">
                 MIND.FLOW.FOCUS.
             </h1>
@@ -368,7 +402,7 @@
                                 </button>
                             </div>
                             <button data-target="panel-topic-3-14" data-path="svg-path-adhd-14" class="brain-btn w-full p-4 rounded-lg font-semibold text-left mb-6 reveal-on-scroll interactive-hint-pulse" role="tab" aria-selected="false">
-                                <span class="text-glow-yellow text-lg block">Wie hilft es bei ADHS?</span>
+                                <span class="text-yellow-300 text-lg block">Wie hilft es bei ADHS?</span>
                                 <span class="text-sm text-slate-400">Den "Direktor" im Gehirn trainieren.</span>
                             </button>
                         </div>
@@ -396,7 +430,7 @@
                                 </p>
                             </div>
                             <div id="panel-topic-3-14" class="brain-panel hidden" role="tabpanel">
-                                <h3 class="text-2xl font-bold text-glow-yellow mb-4">ADHS-Fokus: Aktiv</h3>
+                                <h3 class="text-2xl font-bold text-yellow-300 mb-4">ADHS-Fokus: Aktiv</h3>
                                 <p class="text-lg leading-relaxed">
                                     Das ist die Evidenz, die du gesucht hast. Stell dir dein Gehirn vereinfacht vor:
                                     <br><br>
@@ -448,7 +482,7 @@
                             </p>
                         </div>
                         <div class="card-glass p-6 rounded-lg reveal-on-scroll">
-                            <h3 class="text-2xl font-bold text-glow-yellow mb-2">BEWEIS 3: Bessere Verbindung</h3>
+                            <h3 class="text-2xl font-bold text-yellow-300 mb-2">BEWEIS 3: Bessere Verbindung</h3>
                             <p class="text-slate-300">
                                 Die "Datenleitung" zwischen dem ruhigen Direktor (PFC) und dem lauten Alarm-Zentrum (Amygdala) wird verbessert. Der Boss kann also besser beim Alarm-Zentrum "anrufen" und sagen: "Hey, alles okay, fahr mal runter." Das ist der Kern von besserer Selbstregulation.
                             </p>
@@ -525,7 +559,6 @@
 
         <!-- HERO-SEKTION (ERWACHSENE) -->
         <section id="hero-adult" class="h-screen flex flex-col justify-center items-center text-center p-4 reveal-on-scroll visible">
-            <!-- Mobile-Fix: text-4xl (kleinste) -> sm:text-6xl -> md:text-8xl + break-words -->
             <h1 class="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter text-glow-cyan w-full break-words">
                 MIND.FLOW.FOCUS.
             </h1>
@@ -565,13 +598,14 @@
                             </g>
                             <path class="brain-highlight pfc" id="svg-path-pfc-adult" d="M110.8,5.3C87.4,0.4,63.6,5.6,44.9,20.5C33.2,30.3,24.1,43.3,20.4,57.5"/>
                             <path class="brain-highlight body" id="svg-path-body-adult" d="M78.6,163.5c-4.3-1.4-8.3-3.6-12-6.5c-5.7-4.5-9.8-10.4-11.7-17.1c-1.9-6.7-1.5-13.8,1.1-20.2"/>
-                            <!-- Pfad geändert -->
-                            <path class="brain-highlight handbuch" id="svg-path-handbuch-adult" d="M39.9,83c1.9-22.7,13.2-43.2,29.9-56.5 M132.8,11.7c23,4.3,42.5,21,50.8,43.2"/>
+                            <!-- Pfad geändert: handbook statt adhd -->
+                            <path class="brain-highlight handbook" id="svg-path-handbook-adult" d="M39.9,83c1.9-22.7,13.2-43.2,29.9-56.5 M132.8,11.7c23,4.3,42.5,21,50.8,43.2"/>
                         </svg>
                     </div>
                     
                     <!-- Rechte Seite: Content-Paneele (ERWACHSENE) -->
                     <div class="w-full lg:w-1/2">
+                        <!-- Eindeutige Wrapper-ID für Event-Delegation -->
                         <div id="brain-controls-adult">
                             <div class="flex flex-col sm:flex-row gap-4 mb-6 reveal-on-scroll" role="tablist">
                                 <button data-target="panel-topic-1-adult" data-path="svg-path-pfc-adult" class="brain-btn flex-1 p-4 rounded-lg font-semibold text-left active interactive-hint-pulse" role="tab" aria-selected="true">
@@ -583,15 +617,15 @@
                                     <span class="text-sm text-slate-400">Psychoneuroimmunologie.</span>
                                 </button>
                             </div>
-                            <!-- Button geändert -->
-                            <button data-target="panel-topic-3-adult" data-path="svg-path-handbuch-adult" class="brain-btn handbuch-btn w-full p-4 rounded-lg font-semibold text-left mb-6 reveal-on-scroll interactive-hint-pulse" role="tab" aria-selected="false">
-                                <span class="text-glow-yellow text-lg block">Klinisches Atem-Handbuch</span>
-                                <span class="text-sm text-slate-400">Direkte physiologische Interventionen.</span>
+                            <!-- Button geändert, um das Handbuch zu laden -->
+                            <button data-target="panel-topic-3-adult" data-path="svg-path-handbook-adult" class="brain-btn handbook-btn w-full p-4 rounded-lg font-semibold text-left mb-6 reveal-on-scroll interactive-hint-pulse" role="tab" aria-selected="false">
+                                <span class="text-yellow-300 text-lg block">Klinisches Atem-Handbuch</span>
+                                <span class="text-sm text-slate-400">Physiologie & Praxis der Selbstregulation.</span>
                             </button>
                         </div>
                         
                         <!-- Content -->
-                        <div class="card-glass p-6 rounded-lg min-h-[300px] reveal-on-scroll">
+                        <div class="card-glass p-6 rounded-lg min-h-[300px] reveal-on-scroll overflow-y-auto max-h-[70vh]">
                             <div id="panel-topic-1-adult" class="brain-panel" role="tabpanel">
                                 <h3 class="text-2xl font-bold text-glow-cyan mb-4">Metawahrnehmung (Selbst-Bewusstsein)</h3>
                                 <p class="text-lg leading-relaxed">
@@ -612,208 +646,206 @@
                             <!-- HIER WIRD DAS ATEM-HANDBUCH EINGEFÜGT -->
                             <div id="panel-topic-3-adult" class="brain-panel hidden" role="tabpanel">
                                 
-                                <main class="max-w-7xl mx-auto">
-                                    <!-- I. Einleitung: Das Fundament (Visuell) -->
-                                    <section id="handbook-intro" class="mb-12 p-4 bg-gray-900 rounded-2xl">
-                                      <h2 class="text-3xl font-bold text-white mb-6 text-center text-glow-yellow">Das Fundament</h2>
-                                      <p class="text-center text-lg text-gray-300 max-w-3xl mx-auto mb-10">
-                                        Deine Atmung ist die direkte Schnittstelle zu deinem Autonomen Nervensystem (VNS). Du kannst sie willentlich steuern, um vom "Gaspedal" (Stress) auf die "Bremse" (Ruhe) zu wechseln.
-                                      </p>
-                                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Sympathikus (Gaspedal) -->
-                                        <div class="bg-gray-700 p-6 rounded-2xl shadow-md border border-red-700">
-                                          <div class="flex items-center mb-4">
-                                            <span class="p-3 rounded-full bg-red-900 mr-4">
-                                              <ion-icon name="flash-outline" class="text-2xl text-red-400"></ion-icon>
-                                            </span>
-                                            <h3 class="text-2xl font-semibold text-red-400">Sympathikus (Gaspedal)</h3>
-                                          </div>
-                                          <p class="text-gray-200">Für "Kampf oder Flucht". Aktiviert bei Stress.</p>
-                                          <ul class="mt-4 space-y-2 list-disc list-inside text-gray-300">
-                                            <li>Herzschlag & Blutdruck steigen</li>
-                                            <li>Stresshormone (Cortisol)</li>
-                                            <li>Schnelle, flache Brustatmung</li>
-                                            <li>Stimuliert durch: <strong class="text-white">Einatmung</strong></li>
-                                          </ul>
-                                        </div>
-                                        <!-- Parasympathikus (Bremse) -->
-                                        <div class="bg-gray-700 p-6 rounded-2xl shadow-md border border-teal-700">
-                                          <div class="flex items-center mb-4">
-                                            <span class="p-3 rounded-full bg-teal-900 mr-4">
-                                              <ion-icon name="leaf-outline" class="text-2xl text-teal-400"></ion-icon>
-                                            </span>
-                                            <h3 class="text-2xl font-semibold text-teal-400">Parasympathikus (Bremse)</h3>
-                                          </div>
-                                          <p class="text-gray-200">Für "Ruhe und Verdauung". Aktiviert bei Entspannung.</p>
-                                          <ul class="mt-4 space-y-2 list-disc list-inside text-gray-300">
-                                            <li>Herzschlag & Blutdruck sinken</li>
-                                            <li>Regeneration & Erholung</li>
-                                            <li>Tiefe, langsame Bauchatmung</li>
-                                            <li>Stimuliert durch: <strong class="text-white">Ausatmung (Vagusnerv)</strong></li>
-                                          </ul>
-                                        </div>
+                                <!-- I. Einleitung: Das Fundament (Visuell) -->
+                                <section id="handbook-intro" class="mb-12 p-4 bg-gray-900 rounded-2xl">
+                                  <h2 class="text-3xl font-bold text-white mb-6 text-center">Die Brücke zur Selbstregulation</h2>
+                                  <p class="text-center text-lg text-gray-300 max-w-3xl mx-auto mb-12">
+                                    Deine Atmung ist die direkte Schnittstelle zu deinem Autonomen Nervensystem (VNS). Du kannst sie willentlich steuern, um vom "Gaspedal" (Stress) auf die "Bremse" (Ruhe) zu wechseln.
+                                  </p>
+                                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Sympathikus (Gaspedal) -->
+                                    <div class="handbook-card-intro bg-gray-700 p-6 rounded-2xl shadow-md border border-red-700 transition-all duration-300 ease-out">
+                                      <div class="flex items-center mb-4">
+                                        <span class="p-3 rounded-full bg-red-900 mr-4">
+                                          <ion-icon name="flash-outline" class="text-2xl text-red-400"></ion-icon>
+                                        </span>
+                                        <h3 class="text-2xl font-semibold text-red-400">Sympathikus (Gaspedal)</h3>
                                       </div>
-                                    </section>
-
-                                    <!-- II. Kategorie 1: Parasympathische Dominanz (Entspannung & Schlaf) -->
-                                    <section id="handbook-category-1" class="mb-12">
-                                      <div class="flex items-center mb-6">
-                                        <ion-icon name="moon-outline" class="text-3xl text-teal-400 mr-4"></ion-icon>
-                                        <h2 class="text-2xl font-bold text-white">Kategorie 1: Entspannung & Sedierung</h2>
-                                      </div>
-                                      <p class="text-md text-gray-300 mb-6 max-w-3xl">Techniken zur maximalen Aktivierung der "Bremse". Ideal bei Stress, Angst, Unruhe oder zum Einschlafen.</p>
-                                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- 4-7-8 -->
-                                        <div class="handbook-card handbook-card-teal">
-                                          <span class="inline-block bg-teal-900 text-teal-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">SCHLAF & ANGSTLÖSUNG</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">4-7-8 Atemtechnik</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Ein "physiologisches Beruhigungsmittel". Nutzt ein 2:1 Ausatem-Verhältnis, um das Nervensystem schnell zu sedieren.</p>
-                                          <!-- GEÄNDERT: data-modal-id statt onclick -->
-                                          <button data-modal-id="modal-478" class="mt-auto w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Der innere Beruhiger
-                                          </button>
-                                        </div>
-                                        <!-- Physiological Sigh -->
-                                        <div class="handbook-card handbook-card-teal">
-                                          <span class="inline-block bg-teal-900 text-teal-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">AKUTER STRESS-RESET</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Physiological Sigh</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Der schnellste Weg, akuten Stress und "Lufthunger" zu beenden. Öffnet kollabierte Lungenbläschen mechanisch.</p>
-                                          <button data-modal-id="modal-sigh" class="mt-auto w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Der Sofort-Reset
-                                          </button>
-                                        </div>
-                                        <!-- Bhramari -->
-                                        <div class="handbook-card handbook-card-teal">
-                                          <span class="inline-block bg-teal-900 text-teal-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">GEDANKENKARUSSELL</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Bhramari (Bienensummen)</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Nutzt Vibration (Summen), um den Vagusnerv direkt zu massieren und Blutdruck sowie innere Unruhe zu senken.</p>
-                                          <button data-modal-id="modal-bhramari" class="mt-auto w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Der Bienenton-Atem
-                                          </button>
-                                        </div>
-                                        <!-- Zwerchfellatmung -->
-                                        <div class="handbook-card handbook-card-gray">
-                                          <span class="inline-block bg-gray-700 text-gray-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">FUNDAMENT</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Zwerchfellatmung</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Die fundamentale Praxis. Kehrt das Stress-Atemmuster (flache Brust) um und signalisiert dem Gehirn "Sicherheit".</p>
-                                          <button data-modal-id="modal-zwerchfell" class="mt-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Die Basis-Übung
-                                          </button>
-                                        </div>
-                                        <!-- Lippenbremse -->
-                                        <div class="handbook-card handbook-card-gray">
-                                          <span class="inline-block bg-gray-700 text-gray-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">KLINISCH</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Lippenbremse</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Erzeugt einen leichten Gegendruck (PEEP), um die Lungenbläschen offen zu halten und die Ausatmung zu verlängern.</p>
-                                          <button data-modal-id="modal-lippenbremse" class="mt-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Die klinische Bremse
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </section>
-
-                                    <!-- III. Kategorie 2: Kohärenz & Konzentration (Fokus) -->
-                                    <section id="handbook-category-2" class="mb-12">
-                                      <div class="flex items-center mb-6">
-                                        <ion-icon name="analytics-outline" class="text-3xl text-blue-400 mr-4"></ion-icon>
-                                        <h2 class="text-2xl font-bold text-white">Kategorie 2: Kohärenz & Fokus</h2>
-                                      </div>
-                                      <p class="text-md text-gray-300 mb-6 max-w-3xl">Techniken für Balance. Sie schaffen einen stabilen, rhythmischen Zustand (Kohärenz) für mentale Klarheit und Stressresilienz.</p>
-                                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Box Breathing -->
-                                        <div class="handbook-card handbook-card-blue">
-                                          <span class="inline-block bg-blue-900 text-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">FOKUS UNTER DRUCK</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Box Breathing (4-4-4-4)</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Von Spezialeinheiten genutzt. Der Rhythmus stabilisiert das VNS und trainiert die CO2-Toleranz für höhere Stressresilienz.</p>
-                                          <button data-modal-id="modal-box" class="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Die Kastenatmung
-                                          </button>
-                                        </div>
-                                        <!-- Nadi Shodhana -->
-                                        <div class="handbook-card handbook-card-blue">
-                                          <span class="inline-block bg-blue-900 text-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">MENTALE BALANCE</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Nadi Shodhana</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Die Wechselatmung. Harmonisiert die Gehirnhälften, beruhigt das "Gedankenkarussell" und fördert die Konzentration.</p>
-                                          <button data-modal-id="modal-nadi" class="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Die Wechselatmung
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </section>
-                                    
-                                    <!-- IV. Kategorie 3: Sympathische Aktivierung (Energie & Klärung) -->
-                                    <section id="handbook-category-3" class="mb-12">
-                                      <div class="flex items-center mb-6">
-                                        <ion-icon name="sunny-outline" class="text-3xl text-orange-400 mr-4"></ion-icon>
-                                        <h2 class="text-2xl font-bold text-white">Kategorie 3: Aktivierung & Energie</h2>
-                                      </div>
-                                      <p class="text-md text-gray-300 mb-6 max-w-3xl">Physiologische Stimulanzien. Sie "wecken" den Sympathikus, um Müdigkeit zu vertreiben und den Geist zu klären. (Mit Vorsicht anzuwenden!)</p>
-                                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Kapalabhati -->
-                                        <div class="handbook-card handbook-card-orange">
-                                          <span class="inline-block bg-orange-900 text-orange-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">REINIGUNG & KLÄRUNG</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Kapalabhati (Feueratem)</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Eine Reinigungsübung (Kriya) mit aktiver Aus- und passiver Einatmung. Reinigt die Atemwege und schärft den Intellekt.</p>
-                                          <button data-modal-id="modal-kapalabhati" class="mt-auto w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Der Feueratem
-                                          </button>
-                                        </div>
-                                        <!-- Bhastrika -->
-                                        <div class="handbook-card handbook-card-orange">
-                                          <span class="inline-block bg-orange-900 text-orange-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">MAXIMALE ENERGIE</span>
-                                          <h3 class="text-xl font-semibold text-white mb-2">Bhastrika (Blasebalg)</h3>
-                                          <p class="text-gray-300 mb-4 flex-grow">Maximale Energetisierung durch aktive Ein- und Ausatmung. Stärker als Kapalabhati, flutet das Gehirn mit Sauerstoff.</p>
-                                          <button data-modal-id="modal-bhastrika" class="mt-auto w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900">
-                                            Start: Der Blasebalg
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </section>
-                                    
-                                    <!-- V. Kritisches Sicherheits-Dossier -->
-                                    <section id="handbook-safety" class="mt-12 p-6 bg-gray-800 border border-red-700 rounded-2xl shadow-lg">
-                                      <div class="flex items-center mb-6">
-                                        <ion-icon name="warning-outline" class="text-4xl text-red-400 mr-5"></ion-icon>
-                                        <h2 class="text-2xl font-bold text-red-300">V. Kritisches Sicherheits-Dossier</h2>
-                                      </div>
-                                      <p class="text-lg text-red-200 mb-6">Atemtechniken sind potente physiologische Interventionen. Eine unsachgemäße Anwendung, insbesondere der aktivierenden Techniken (Kategorie 3), kann gesundheitsschädlich sein.</p>
-                                      
-                                      <h3 class="text-xl font-semibold text-white mb-4">Spezifische Kontraindikationen (HOCHRISIKO)</h3>
-                                      <p class="text-gray-300 mb-4">Die folgenden Kontraindikationen gelten insbesondere für die kraftvollen, aktivierenden Techniken der <strong class="text-red-400">Kategorie 3 (Kapalabhati, Bhastrika)</strong>.</p>
-                                      <p class="font-bold text-white mb-4">Praktizieren Sie diese Techniken NICHT bei:</p>
-                                      <ul class="list-disc list-inside space-y-2 text-gray-300 columns-1 md:columns-2">
-                                        <li>Schwangerschaft</li>
-                                        <li>Menstruation</li>
-                                        <li>Hoher Blutdruck (Hypertonie)</li>
-                                        <li>Herzerkrankungen (z.B. KHK)</li>
-                                        <li>Lungenerkrankungen (z.B. schweres Asthma, COPD)</li>
-                                        <li>Erhöhter Augeninnendruck (Glaukom)</li>
-                                        <li>Ohrprobleme (z.B. Infektionen)</li>
-                                        <li>Epilepsie</li>
-                                        <li>Kürzliche Operationen im Bauchraum</li>
+                                      <p class="text-gray-200">Für "Kampf oder Flucht". Aktiviert bei Stress.</p>
+                                      <ul class="mt-4 space-y-2 list-disc list-inside text-gray-300">
+                                        <li>Herzschlag & Blutdruck steigen</li>
+                                        <li>Stresshormone (Cortisol)</li>
+                                        <li>Schnelle, flache Brustatmung</li>
+                                        <li>Stimuliert durch: <strong class="text-white">Einatmung</strong></li>
                                       </ul>
-                                    </section>
-                                </main>
+                                    </div>
+                                    <!-- Parasympathikus (Bremse) -->
+                                    <div class="handbook-card-intro bg-gray-700 p-6 rounded-2xl shadow-md border border-teal-700 transition-all duration-300 ease-out">
+                                      <div class="flex items-center mb-4">
+                                        <span class="p-3 rounded-full bg-teal-900 mr-4">
+                                          <ion-icon name="leaf-outline" class="text-2xl text-teal-400"></ion-icon>
+                                        </span>
+                                        <h3 class="text-2xl font-semibold text-teal-400">Parasympathikus (Bremse)</h3>
+                                      </div>
+                                      <p class="text-gray-200">Für "Ruhe und Verdauung". Aktiviert bei Entspannung.</p>
+                                      <ul class="mt-4 space-y-2 list-disc list-inside text-gray-300">
+                                        <li>Herzschlag & Blutdruck sinken</li>
+                                        <li>Regeneration & Erholung</li>
+                                        <li>Tiefe, langsame Bauchatmung</li>
+                                        <li>Stimuliert durch: <strong class="text-white">Ausatmung (Vagusnerv)</strong></li>
+                                      </ul>
+                                    </div>
+                                  </div>
+                                </section>
 
-                            </div> <!-- ENDE ATEM-HANDBUCH-PANEL -->
+                                <!-- II. Kategorie 1: Parasympathische Dominanz (Entspannung & Schlaf) -->
+                                <section id="handbook-category-1" class="mb-12">
+                                  <div class="flex items-center mb-6">
+                                    <ion-icon name="moon-outline" class="text-3xl text-teal-400 mr-4"></ion-icon>
+                                    <h2 class="text-2xl font-bold text-white">Kategorie 1: Entspannung & Sedierung</h2>
+                                  </div>
+                                  <p class="text-md text-gray-300 mb-6 max-w-3xl">Techniken zur maximalen Aktivierung der "Bremse" (Parasympathikus). Ideal bei Stress, Angst, Unruhe oder zum Einschlafen.</p>
+                                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- 4-7-8 -->
+                                    <div class="handbook-card handbook-card-teal">
+                                      <span class="inline-block bg-teal-900 text-teal-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">SCHLAF & ANGSTLÖSUNG</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">4-7-8 Atemtechnik</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Ein "physiologisches Beruhigungsmittel". Nutzt ein 2:1 Ausatem-Verhältnis, um das Nervensystem schnell zu sedieren.</p>
+                                      <button onclick="handbook_openModal('modal-478')" class="mt-auto w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Der innere Beruhiger
+                                      </button>
+                                    </div>
+                                    <!-- Physiological Sigh -->
+                                    <div class="handbook-card handbook-card-teal">
+                                      <span class="inline-block bg-teal-900 text-teal-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">AKUTER STRESS-RESET</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Physiological Sigh</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Der schnellste Weg, akuten Stress und "Lufthunger" zu beenden. Öffnet kollabierte Lungenbläschen mechanisch.</p>
+                                      <button onclick="handbook_openModal('modal-sigh')" class="mt-auto w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Der Sofort-Reset
+                                      </button>
+                                    </div>
+                                    <!-- Bhramari -->
+                                    <div class="handbook-card handbook-card-teal">
+                                      <span class="inline-block bg-teal-900 text-teal-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">GEDANKENKARUSSELL</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Bhramari (Bienensummen)</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Nutzt Vibration (Summen), um den Vagusnerv direkt zu massieren und Blutdruck sowie innere Unruhe zu senken.</p>
+                                      <button onclick="handbook_openModal('modal-bhramari')" class="mt-auto w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Der Bienenton-Atem
+                                      </button>
+                                    </div>
+                                    <!-- Zwerchfellatmung -->
+                                    <div class="handbook-card handbook-card-gray">
+                                      <span class="inline-block bg-gray-700 text-gray-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">FUNDAMENT</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Zwerchfellatmung</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Die fundamentale Praxis. Kehrt das Stress-Atemmuster (flache Brust) um und signalisiert dem Gehirn "Sicherheit".</p>
+                                      <button onclick="handbook_openModal('modal-zwerchfell')" class="mt-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Die Basis-Übung
+                                      </button>
+                                    </div>
+                                    <!-- Lippenbremse -->
+                                    <div class="handbook-card handbook-card-gray">
+                                      <span class="inline-block bg-gray-700 text-gray-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">KLINISCH</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Lippenbremse</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Erzeugt einen leichten Gegendruck (PEEP), um die Lungenbläschen offen zu halten und die Ausatmung zu verlängern.</p>
+                                      <button onclick="handbook_openModal('modal-lippenbremse')" class="mt-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Die klinische Bremse
+                                      </button>
+                                    </div>
+                                  </div>
+                                </section>
+
+                                <!-- III. Kategorie 2: Kohärenz & Konzentration (Fokus) -->
+                                <section id="handbook-category-2" class="mb-12">
+                                  <div class="flex items-center mb-6">
+                                    <ion-icon name="analytics-outline" class="text-3xl text-blue-400 mr-4"></ion-icon>
+                                    <h2 class="text-2xl font-bold text-white">Kategorie 2: Kohärenz & Fokus</h2>
+                                  </div>
+                                  <p class="text-md text-gray-300 mb-6 max-w-3xl">Techniken für Balance. Sie schaffen einen stabilen, rhythmischen Zustand (Kohärenz) für mentale Klarheit und Stressresilienz.</p>
+                                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Box Breathing -->
+                                    <div class="handbook-card handbook-card-blue">
+                                      <span class="inline-block bg-blue-900 text-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">FOKUS UNTER DRUCK</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Box Breathing (4-4-4-4)</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Von Spezialeinheiten genutzt. Der Rhythmus stabilisiert das VNS und trainiert die CO2-Toleranz für höhere Stressresilienz.</p>
+                                      <button onclick="handbook_openModal('modal-box')" class="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Die Kastenatmung
+                                      </button>
+                                    </div>
+                                    <!-- Nadi Shodhana -->
+                                    <div class="handbook-card handbook-card-blue">
+                                      <span class="inline-block bg-blue-900 text-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">MENTALE BALANCE</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Nadi Shodhana</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Die Wechselatmung. Harmonisiert die Gehirnhälften, beruhigt das "Gedankenkarussell" und fördert die Konzentration.</p>
+                                      <button onclick="handbook_openModal('modal-nadi')" class="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Die Wechselatmung
+                                      </button>
+                                    </div>
+                                  </div>
+                                </section>
+                                
+                                <!-- IV. Kategorie 3: Sympathische Aktivierung (Energie & Klärung) -->
+                                <section id="handbook-category-3" class="mb-12">
+                                  <div class="flex items-center mb-6">
+                                    <ion-icon name="sunny-outline" class="text-3xl text-orange-400 mr-4"></ion-icon>
+                                    <h2 class="text-2xl font-bold text-white">Kategorie 3: Aktivierung & Energie</h2>
+                                  </div>
+                                  <p class="text-md text-gray-300 mb-6 max-w-3xl">Physiologische Stimulanzien. Sie "wecken" den Sympathikus, um Müdigkeit zu vertreiben und den Geist zu klären. (Mit Vorsicht anzuwenden!)</p>
+                                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Kapalabhati -->
+                                    <div class="handbook-card handbook-card-orange">
+                                      <span class="inline-block bg-orange-900 text-orange-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">REINIGUNG & KLÄRUNG</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Kapalabhati (Feueratem)</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Eine Reinigungsübung (Kriya) mit aktiver Aus- und passiver Einatmung. Reinigt die Atemwege und schärft den Intellekt.</p>
+                                      <button onclick="handbook_openModal('modal-kapalabhati')" class="mt-auto w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Der Feueratem
+                                      </button>
+                                    </div>
+                                    <!-- Bhastrika -->
+                                    <div class="handbook-card handbook-card-orange">
+                                      <span class="inline-block bg-orange-900 text-orange-200 text-xs font-semibold px-2.5 py-0.5 rounded-full mb-3 w-max">MAXIMALE ENERGIE</span>
+                                      <h3 class="text-xl font-semibold text-white mb-2">Bhastrika (Blasebalg)</h3>
+                                      <p class="text-gray-300 mb-4 flex-grow">Maximale Energetisierung durch aktive Ein- und Ausatmung. Stärker als Kapalabhati, flutet das Gehirn mit Sauerstoff.</p>
+                                      <button onclick="handbook_openModal('modal-bhastrika')" class="mt-auto w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                                        Start: Der Blasebalg
+                                      </button>
+                                    </div>
+                                  </div>
+                                </section>
+                                
+                                <!-- V. Kritisches Sicherheits-Dossier -->
+                                <section id="handbook-safety" class="mt-12 p-6 bg-gray-800 border border-red-700 rounded-2xl shadow-lg">
+                                  <div class="flex items-center mb-6">
+                                    <ion-icon name="warning-outline" class="text-4xl text-red-400 mr-5"></ion-icon>
+                                    <h2 class="text-2xl font-bold text-red-300">V. Kritisches Sicherheits-Dossier</h2>
+                                  </div>
+                                  <p class="text-md text-red-200 mb-6">Atemtechniken sind potente physiologische Interventionen. Eine unsachgemäße Anwendung, insbesondere der aktivierenden Techniken (Kategorie 3), kann gesundheitsschädlich sein.</p>
+                                  <h3 class="text-lg font-semibold text-white mb-4">Allgemeine Warnhinweise (Alle Techniken)</h3>
+                                  <ul class="list-disc list-inside space-y-2 text-gray-300 mb-6">
+                                    <li><strong>Schwindel:</strong> Leichtes Schwindelgefühl ist bei CO2-verändernden Techniken möglich. Bei starkem Unwohlsein, Benommenheit oder Schwindel, Übung SOFORT beenden und normal atmen.</li>
+                                    <li><strong>Kein Zwang:</strong> Führen Sie die Übungen nie mit Stress oder Druck aus. Eine angespannte Ausführung ist kontraproduktiv.</li>
+                                  </ul>
+                                  
+                                  <h3 class="text-lg font-semibold text-red-300 mb-4">Spezifische Kontraindikationen (HOCHRISIKO)</h3>
+                                  <p class="text-gray-300 mb-4">Die folgenden Kontraindikationen gelten insbesondere für die kraftvollen, aktivierenden Techniken der <strong class="text-red-400">Kategorie 3 (Kapalabhati, Bhastrika)</strong>.</p>
+                                  <p class="font-bold text-white mb-4">Praktizieren Sie diese Techniken NICHT bei:</p>
+                                  <ul class="list-disc list-inside space-y-2 text-gray-300 columns-1 md:columns-2">
+                                    <li>Schwangerschaft</li>
+                                    <li>Menstruation</li>
+                                    <li>Hoher Blutdruck (Hypertonie)</li>
+                                    <li>Herzerkrankungen (z.B. KHK)</li>
+                                    <li>Lungenerkrankungen (z.B. schweres Asthma, COPD)</li>
+                                    <li>Erhöhter Augeninnendruck (Glaukom)</li>
+                                    <li>Ohrprobleme (z.B. Infektionen)</li>
+                                    <li>Epilepsie</li>
+                                    <li>Kürzliche Operationen im Bauchraum</li>
+                                  </ul>
+                                </section>
+
+                            </div> <!-- ENDE ATEM-HANDBUCH EINFÜGUNG -->
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEKTION 2: (ERWACHSENE) - Platzhalter, da Evidenz entfernt wurde -->
-        <!-- Diese Sektion ist jetzt leer, da das Handbuch in Sektion 1 integriert wurde. -->
-        <!-- Wir können sie für später lassen oder entfernen. Ich lasse sie als leere Sektion. -->
-        <section id="evidenz-adult" class="py-12 px-4 bg-slate-900/50">
-            <!-- Leer, oder wir könnten Sektion 3 hierher verschieben -->
-        </section>
+        <!-- SEKTION 2: EVIDENZ (ERWACHSENE) - (ENTFERNT/ERSETZT DURCH HANDBUCH) -->
+        <!-- <section id="evidenz-adult" class="py-24 px-4 bg-slate-900/50"> ... </section> -->
 
 
         <!-- SEKTION 3: DIE PRAXIS (ERWACHSENE) -->
-        <section id="praxis-adult" class="py-24 px-4 min-h-[90vh] flex items-center">
+        <section id="praxis-adult" class="py-24 px-4 min-h-[90vh] flex items-center bg-slate-900/50">
             <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-4xl md:text-5xl font-bold text-center mb-4 reveal-on-scroll">IHRE ÜBUNG: <span class="text-glow-cyan">DER ATEM-ANKER</span></h2>
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-4 reveal-on-scroll">IHRE PRAXIS: <span class="text-glow-cyan">DER ATEM-ANKER</span></h2>
                 <p class="text-lg text-center max-w-3xl mx-auto mb-16 text-slate-400 reveal-on-scroll">
                     Vom Wissen zur Verkörperung. Theorie ist der Bauplan, Praxis ist das Training. Beginnen Sie Ihre Trainingseinheit. Fokussieren Sie sich ausschließlich auf die Empfindung Ihres Atems.
                 </p>
@@ -850,7 +882,7 @@
         </section>
 
         <!-- SEKTION 4: FAZIT (ERWACHSENE) -->
-        <section id="fazit-adult" class="py-32 px-4 text-center bg-slate-900/50">
+        <section id="fazit-adult" class="py-32 px-4 text-center">
             <div class="max-w-3xl mx-auto">
                 <h2 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 mb-8 reveal-on-scroll">
                     DAS LEBEN IST SCHÖN.
@@ -858,21 +890,15 @@
                     SEI PRÄSENT.
                 </h2>
                 <p class="text-xl text-slate-300 leading-relaxed reveal-on-scroll">
-                    Ihr Gehirn ist neuroplastisch. Sie sind nicht Ihren Mustern ausgeliefert, Sie können sie aktiv modulieren. Achtsamkeit ist das empirisch validierte Werkzeug, um den Autopiloten zu unterbrechen und bewusste Selbstregulation zu praktizieren.
+                    Ihr Gehirn ist neuroplastisch. Sie sind nicht Ihren Mustern ausgeliefert, Sie können sie aktiv modulieren. Achtsamkeit und bewusste Atmung sind die empirisch validierten Werkzeuge, um den Autopiloten zu unterbrechen und bewusste Selbstregulation zu praktizieren.
                     <br><br>
-                    Das Bewusstsein für sich selbst – und die Fähigkeit, den eigenen Körper durch den Atem zu steuern – ist der Anfang jeder nachhaltigen Veränderung.
+                    Das Bewusstsein für sich selbst ist der Anfang jeder Veränderung.
                 </p>
             </div>
         </section>
 
     </div> <!-- ENDE CONTENT ERWACHSENE -->
     
-    <!-- ===================================== -->
-    <!-- ===== MODALE FÜR ATEM-HANDBUCH ===== -->
-    <!-- ===================================== -->
-    
-    <!-- Diese Modale werden jetzt dynamisch per JavaScript erstellt, um den Code sauberer zu halten -->
-
 
     <!-- GEMEINSAMER FOOTER -->
     <footer class="text-center py-8 text-sm text-slate-500 px-4">
@@ -884,128 +910,321 @@
         <p class="reveal-on-scroll">Ein interaktives Leitwerk. © 2025. Alle Rechte vorbehalten.</p>
     </footer>
 
-    <!-- ===================================== -->
-    <!-- ===== JAVASCRIPT (KOMPLETT NEU) ===== -->
-    <!-- ===================================== -->
+    <!-- ============================================= -->
+    <!-- ===== MODALE FÜR ATEM-HANDBUCH (GLOBAL) ===== -->
+    <!-- ============================================= -->
+    <!-- HIER WERDEN DIE MODALE DYNAMISCH PER JS EINGEFÜGT -->
+
+
+    <!-- ========================================= -->
+    <!-- ===== HAUPT-SKRIPT (ALLES IN EINEM) ===== -->
+    <!-- ========================================= -->
     <script>
-        // Globale Timer-Referenzen, damit wir sie jederzeit stoppen können
-        let appTimerStore = {};
+        
+        // --- GLOBALE VARIABLEN FÜR TIMER ---
+        // Eigener Store für den "Atem-Anker" (Sektion 3)
+        let ankerTimerStore = {};
+        
+        // Eigener Store für das "Atem-Handbuch" (Sektion 1, Erwachsene)
         let handbookTimerStore = {
             interval: null,
-            currentModalId: null,
-            lastFocusedElement: null,
-            focusableElements: [],
             state: {}
         };
+        
+        // Globale Steuer-Variablen für das Handbuch
+        let handbook_currentModalId = null;
+        let handbook_lastFocusedElement = null;
+        let handbook_focusableElements = [];
 
-        // GLOBALE STOP-FUNKTION -- DIESER BLOCK WIRD VERSCHOBEN
-        /*
+
+        // --- GLOBALE HELFER-FUNKTIONEN (Müssen global sein für onclick) ---
+
+        // Stoppt *alle* Timer auf der Seite (Anker & Handbuch)
+        // Wird vom Age-Switcher aufgerufen
         function stopAllTimers() {
-            // Stoppt den "Atem-Anker" Timer
-            Object.values(appTimerStore).forEach(timers => {
-                if (timers && timers.timerInterval) {
-                    clearInterval(timers.timerInterval);
-                    timers.timerInterval = null;
+            // Stoppe Anker-Timer
+            Object.values(ankerTimerStore).forEach(instanceTimers => {
+                if (instanceTimers && instanceTimers.timerInterval) {
+                    clearInterval(instanceTimers.timerInterval);
+                    instanceTimers.timerInterval = null;
                 }
-                if (timers && timers.breathInterval) {
-                    clearInterval(timers.breathInterval);
-                    timers.breathInterval = null;
+                if (instanceTimers && instanceTimers.breathInterval) {
+                    clearInterval(instanceTimers.breathInterval);
+                    instanceTimers.breathInterval = null;
                 }
-                if (timers && timers.breathingTimeout) {
-                    clearTimeout(timers.breathingTimeout);
-                    timers.breathingTimeout = null;
+                if (instanceTimers && instanceTimers.breathingTimeout) {
+                    clearTimeout(instanceTimers.breathingTimeout);
+                    instanceTimers.breathingTimeout = null;
                 }
             });
-            // Stoppt den "Handbuch" Timer
+            // Stoppe Handbuch-Timer
             handbook_stopBreathing();
         }
-        */
 
-        document.addEventListener('DOMContentLoaded', () => {
-
-            // === HIER WIRD DIE FUNKTION EINGEFÜGT ===
-            function stopAllTimers() {
-                // Stoppt den "Atem-Anker" Timer
-                Object.values(appTimerStore).forEach(timers => {
-                    if (timers && timers.timerInterval) {
-                        clearInterval(timers.timerInterval);
-                        timers.timerInterval = null;
-                    }
-                    if (timers && timers.breathInterval) {
-                        clearInterval(timers.breathInterval);
-                        timers.breathInterval = null;
-                    }
-                    if (timers && timers.breathingTimeout) {
-                        clearTimeout(timers.breathingTimeout);
-                        timers.breathingTimeout = null;
-                    }
-                });
-                // Stoppt den "Handbuch" Timer
-                handbook_stopBreathing();
+        // Haptik-Funktion (Global)
+        function handbook_doVibrate(duration) {
+            if (navigator.vibrate) {
+                navigator.vibrate(duration);
             }
-            // === ENDE EINFÜGEN ===
-
-
-            // --- 1. MASTER CLICK HANDLER (Event Delegation) ---
-            // Dieser eine Listener fängt alle Klicks ab und delegiert sie.
-            // Das löst alle `ReferenceError`-Probleme, da kein inline `onclick` mehr verwendet wird.
+        }
+        
+        // Fokus-Trap Handler (Global)
+        const handbook_focusTrapHandler = (e) => {
+            if (e.key !== 'Tab' || !handbook_focusableElements.length) return;
             
-            document.body.addEventListener('click', function(e) {
+            const firstFocusable = handbook_focusableElements[0];
+            const lastFocusable = handbook_focusableElements[handbook_focusableElements.length - 1];
+
+            if (e.shiftKey) { // Shift + Tab
+                if (document.activeElement === firstFocusable) {
+                    lastFocusable.focus();
+                    e.preventDefault();
+                }
+            } else { // Tab
+                if (document.activeElement === lastFocusable) {
+                    firstFocusable.focus();
+                    e.preventDefault();
+                }
+            }
+        };
+
+        // Modal-Steuerung (Global für onclick)
+        function handbook_openModal(modalId) {
+            handbook_stopBreathing();
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+
+            handbook_doVibrate(30);
+            handbook_lastFocusedElement = document.activeElement;
+            handbook_currentModalId = modalId;
+            
+            modal.classList.remove('hidden');
+            modal.querySelector('.handbook-modal-content-container').classList.remove('closing');
+            modal.classList.remove('closing');
+            
+            document.body.style.overflow = 'hidden';
+            
+            handbook_focusableElements = Array.from(
+                modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                )
+            ).filter(el => el.offsetParent !== null);
+            
+            if (handbook_focusableElements.length) handbook_focusableElements[0].focus();
+            
+            document.addEventListener('keydown', handbook_focusTrapHandler);
+            handbook_switchTab(modalId, 'praxis');
+        }
+
+        function handbook_closeModal(modalId, event = null) {
+            if (event && event.target !== event.currentTarget) {
+                return;
+            }
+            const modal = document.getElementById(modalId);
+            if (!modal || !handbook_currentModalId) return;
+
+            handbook_stopBreathing();
+            
+            modal.querySelector('.handbook-modal-content-container').classList.add('closing');
+            modal.classList.add('closing');
+            
+            document.body.style.overflow = 'auto';
+            document.removeEventListener('keydown', handbook_focusTrapHandler);
+            
+            if (handbook_lastFocusedElement) {
+                handbook_lastFocusedElement.focus();
+            }
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.querySelector('.handbook-modal-content-container').classList.remove('closing');
+                modal.classList.remove('closing');
                 
-                // --- A) Alters-Umschalter ---
-                const ageToggleBtn = e.target.closest('.age-nav-button');
-                if (ageToggleBtn) {
-                    e.preventDefault();
-                    switchAgeView(ageToggleBtn.id);
+                if (handbook_currentModalId === modalId) {
+                    handbook_currentModalId = null;
+                    handbook_lastFocusedElement = null;
                 }
+            }, 200);
+        }
 
-                // --- B) Atem-Anker (App 1) ---
-                const appMissionBtn = e.target.closest('.mission-btn');
-                if (appMissionBtn) {
-                    e.preventDefault();
-                    startAppMission(appMissionBtn);
+        // Tab-Umschaltung (Global für onclick)
+        function handbook_switchTab(modalId, tabName) {
+            const modal = document.getElementById(modalId);
+            modal.querySelectorAll('.handbook-tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`handbook-tab-${tabName}-${modalId}`).classList.remove('hidden');
+            
+            const praxisBtn = document.getElementById(`handbook-btn-praxis-${modalId}`);
+            const theorieBtn = document.getElementById(`handbook-btn-theorie-${modalId}`);
+            const praxisFooter = document.getElementById(`handbook-praxis-footer-${modalId}`);
+
+            if (tabName === 'praxis') {
+                praxisBtn.classList.replace('handbook-tab-inactive', 'handbook-tab-active');
+                theorieBtn.classList.replace('handbook-tab-active', 'handbook-tab-inactive');
+                if (praxisFooter) praxisFooter.classList.remove('hidden');
+            } else {
+                praxisBtn.classList.replace('handbook-tab-active', 'handbook-tab-inactive');
+                theorieBtn.classList.replace('handbook-tab-inactive', 'handbook-tab-active');
+                if (praxisFooter) praxisFooter.classList.add('hidden');
+            }
+        }
+        
+        // --- ZENTRALE ATEM-LOGIK (HANDBUCH - Global) ---
+        function handbook_startBreathing(btn, config) {
+            handbook_stopBreathing(); // Stoppt sich selbst, falls schon was läuft
+            handbook_doVibrate(70); 
+
+            handbookTimerStore.state = {
+                visualizerType: config.visualizerType || 'circle',
+                phases: config.phases,
+                phaseNames: config.phaseNames,
+                timerEl: document.getElementById(`handbook-timer-${handbook_currentModalId}`),
+                statusEl: document.getElementById(`handbook-status-${handbook_currentModalId}`),
+                visualizerEl: document.getElementById(`handbook-visualizer-${handbook_currentModalId}`),
+                startBtnEl: btn,
+                currentPhase: -1,
+                secondsInPhase: 0,
+                pulseCount: 0,
+                totalPulses: config.totalPulses || 0,
+                bpm: config.bpm || 0
+            };
+            
+            const s = handbookTimerStore.state;
+            s.startBtnEl.textContent = "Läuft... (Zum Stoppen klicken)";
+            s.startBtnEl.onclick = () => handbook_stopBreathing();
+            
+            if (s.visualizerType === 'pulse') {
+                s.timerEl.textContent = `${s.pulseCount} / ${s.totalPulses}`;
+                handbookTimerStore.interval = setInterval(handbook_tick, (60 / s.bpm) * 1000);
+                handbook_tick(); // Sofort starten
+            } else {
+                handbook_nextPhase(); // Startet den ersten Zyklus
+                handbookTimerStore.interval = setInterval(handbook_tick, 1000);
+            }
+        }
+
+        function handbook_stopBreathing() {
+            if (handbookTimerStore.interval) {
+                clearInterval(handbookTimerStore.interval);
+                handbookTimerStore.interval = null;
+                handbook_doVibrate(30);
+            }
+            
+            const s = handbookTimerStore.state;
+            
+            // KORREKTUR: Prüfen, ob state-Objekte existieren, bevor darauf zugegriffen wird
+            if (s && s.timerEl) s.timerEl.textContent = 'Start';
+            if (s && s.statusEl) s.statusEl.textContent = '';
+            if (s && s.startBtnEl) {
+                s.startBtnEl.textContent = 'Start';
+                // WICHTIG: onclick neu zuweisen, da es durch stopBreathing() überschrieben wurde
+                // Dies wird jetzt von `handbook_attachClickListeners` beim Laden erledigt.
+            }
+            
+            if (s && s.visualizerEl) {
+                s.visualizerEl.className = s.visualizerEl.className.split(' ')[0]; // Entfernt alle 'animate-' Klassen
+                if (s.visualizerType === 'nadi') {
+                    s.visualizerEl.querySelector('.handbook-nadi-left').classList.remove('active');
+                    s.visualizerEl.querySelector('.handbook-nadi-right').classList.remove('active');
                 }
+            }
+            // ENDE KORREKTUR
+            
+            handbookTimerStore.state = {}; // Reset state
+        }
 
-                // --- C) Atem-Handbuch (App 2) - Modal öffnen ---
-                const modalOpenBtn = e.target.closest('[data-modal-id]');
-                if (modalOpenBtn) {
-                    e.preventDefault();
-                    handbook_openModal(modalOpenBtn.dataset.modalId);
+        function handbook_tick() {
+            const s = handbookTimerStore.state;
+            if (!s.visualizerType) return; // Gestoppt
+
+            if (s.visualizerType === 'pulse') {
+                if (s.pulseCount >= s.totalPulses) {
+                    s.statusEl.textContent = "Runde beendet. Nachspüren.";
+                    handbook_stopBreathing();
+                    return;
                 }
+                s.pulseCount++;
+                s.timerEl.textContent = `${s.pulseCount} / ${s.totalPulses}`;
+                handbook_updateVisuals(s.phaseNames[s.pulseCount % 2], 0.3); // 0 = aus, 1 = ein
+                handbook_doVibrate(40);
+                return;
+            }
+        
+            if (s.secondsInPhase > 0) {
+                s.timerEl.textContent = s.secondsInPhase;
+                s.secondsInPhase--;
+            } else {
+                handbook_nextPhase();
+            }
+        }
 
-                // --- D) Atem-Handbuch (App 2) - Modal schließen ---
-                // Schließt, wenn auf Backdrop (.handbook-modal-backdrop) oder Close-Button geklickt wird
-                const modalCloseBtn = e.target.closest('.handbook-close-btn');
-                const modalBackdrop = e.target.closest('.handbook-modal-backdrop');
-                if (modalCloseBtn || (modalBackdrop && e.target === modalBackdrop)) {
-                    e.preventDefault();
-                    if(handbookTimerStore.currentModalId) {
-                        handbook_closeModal(handbookTimerStore.currentModalId);
+        function handbook_nextPhase() {
+            const s = handbookTimerStore.state;
+            s.currentPhase = (s.currentPhase + 1) % s.phases.length;
+            s.secondsInPhase = s.phases[s.currentPhase];
+            const phaseName = s.phaseNames[s.currentPhase];
+            const duration = s.phases[s.currentPhase];
+            
+            s.statusEl.textContent = phaseName;
+            s.timerEl.textContent = s.secondsInPhase;
+            s.secondsInPhase--;
+            
+            handbook_doVibrate(50);
+            handbook_updateVisuals(phaseName, duration);
+        }
+        
+        function handbook_updateVisuals(phaseName, duration) {
+            const viz = handbookTimerStore.state.visualizerEl;
+            if (!viz) return;
+
+            viz.className = viz.className.split(' ')[0];
+            if (handbookTimerStore.state.visualizerType === 'nadi') {
+                viz.querySelector('.handbook-nadi-left').classList.remove('active');
+                viz.querySelector('.handbook-nadi-right').classList.remove('active');
+            }
+            
+            void viz.offsetWidth; // CSS-Animation-Trigger
+            viz.style.animationDuration = duration + 's';
+            const pName = phaseName.toLowerCase();
+
+            switch(handbookTimerStore.state.visualizerType) {
+                case 'circle':
+                    if (pName.includes('einatmen')) viz.classList.add('handbook-animate-breathe-in');
+                    else if (pName.includes('ausatmen')) viz.classList.add('handbook-animate-breathe-out');
+                    else if (pName.includes('halten')) {
+                        viz.classList.add('handbook-animate-breathe-hold');
+                        viz.style.animationDuration = '1.5s';
                     }
-                }
+                    break;
+                case 'nadi':
+                    if (pName.includes('links ein')) viz.querySelector('.handbook-nadi-left').classList.add('active');
+                    else if (pName.includes('rechts aus')) viz.querySelector('.handbook-nadi-right').classList.add('active');
+                    else if (pName.includes('rechts ein')) viz.querySelector('.handbook-nadi-right').classList.add('active');
+                    else if (pName.includes('links aus')) viz.querySelector('.handbook-nadi-left').classList.add('active');
+                    break;
+                case 'pulse':
+                    if (pName.includes('ausatmen')) viz.classList.add('handbook-animate-pulse-out');
+                    else if (pName.includes('einatmen')) viz.classList.add('handbook-animate-pulse-in');
+                    viz.style.animationDuration = '0.3s';
+                    break;
+                case 'vibrate':
+                    viz.classList.add('handbook-animate-vibrate');
+                    viz.style.animationDuration = '0.1s';
+                    break;
+            }
+        }
 
-                // --- E) Atem-Handbuch (App 2) - Tabs umschalten ---
-                const tabBtn = e.target.closest('.handbook-tab-button');
-                if (tabBtn) {
-                    e.preventDefault();
-                    handbook_switchTab(tabBtn.closest('.handbook-modal-content'), tabBtn.dataset.tabTarget);
-                }
+        // ======================================================
+        // --- ALLES WAS BEIM LADEN DER SEITE PASSIEREN MUSS ---
+        // ======================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. SCROLL-ANIMATION-OBSERVER ---
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
 
-                // --- F) Atem-Handbuch (App 2) - Übung starten/stoppen ---
-                const handbookStartBtn = e.target.closest('.handbook-start-btn');
-                if (handbookStartBtn) {
-                    e.preventDefault();
-                    // Prüfen, ob Timer läuft, um ihn zu stoppen, sonst starten
-                    if (handbookTimerStore.interval) {
-                        handbook_stopBreathing();
-                    } else {
-                        handbook_startBreathing(handbookStartBtn);
-                    }
-                }
-            });
-
-            // --- 2. SCROLL-ANIMATION-OBSERVER ---
-            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
             const observerCallback = (entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -1014,8 +1233,9 @@
                     }
                 });
             };
-            const observer = new IntersectionObserver(observerCallback, observerOptions);
 
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            
             function observeNewContent(containerId) {
                 const targets = document.querySelectorAll(`#${containerId} .reveal-on-scroll`);
                 const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1026,25 +1246,32 @@
                         target.classList.remove('interactive-hint-pulse');
                     } else {
                         if (!target.classList.contains('visible')) {
-                            observer.observe(target);
+                             observer.observe(target);
                         }
                     }
                 });
             }
-            observeNewContent('content-14'); // Initiales Beobachten
+            
+            // Initiales Beobachten für den Standard-Content (14)
+            observeNewContent('content-14');
 
-            // --- 3. INTERAKTIVES GEHIRN-DIAGRAMM ---
+
+            // --- 2. INTERAKTIVES GEHIRN-DIAGRAMM (Funktion für beide Versionen) ---
             function setupBrainControls(controlsId) {
                 const controls = document.getElementById(controlsId);
                 if (!controls) return;
                 
-                controls.querySelectorAll('.brain-btn').forEach(btn => {
+                const brainBtns = controls.querySelectorAll('.brain-btn');
+                
+                // Findet das Elternelement (section) und dann das SVG darin
+                const parentSection = controls.closest('section');
+                const brainSvg = parentSection ? parentSection.querySelector('.brain-svg') : null;
+
+                brainBtns.forEach(btn => {
                     btn.addEventListener('click', () => {
                         const targetPanelId = btn.getAttribute('data-target');
                         const targetPathId = btn.getAttribute('data-path');
-                        const parentSection = controls.closest('section');
-                        const brainSvg = parentSection ? parentSection.querySelector('.brain-svg') : null;
-
+                        
                         controls.querySelectorAll('.brain-btn').forEach(b => {
                             b.classList.remove('active');
                             b.setAttribute('aria-selected', 'false'); 
@@ -1058,7 +1285,9 @@
                         btn.classList.add('active');
                         btn.setAttribute('aria-selected', 'true'); 
                         const targetPanel = document.getElementById(targetPanelId);
-                        if(targetPanel) targetPanel.classList.remove('hidden');
+                        if(targetPanel) {
+                            targetPanel.classList.remove('hidden');
+                        }
                         
                         if (brainSvg) {
                             const path = document.getElementById(targetPathId);
@@ -1067,711 +1296,562 @@
                     });
                 });
                 
+                // Standardmäßig Topic 1 aktivieren
                 const firstBtn = controls.querySelector('.brain-btn');
-                if (firstBtn) firstBtn.click();
+                if (firstBtn) {
+                    firstBtn.click();
+                }
             }
+
             setupBrainControls('brain-controls-14');
             setupBrainControls('brain-controls-adult');
 
-            // --- 4. EVIDENZ-CHART (Radar) ---
+
+            // --- 3. EVIDENZ-CHART (Funktion für beide Versionen) ---
             function createAdhdChart(canvasId) {
                 const ctx = document.getElementById(canvasId);
                 if (!ctx) return;
-                if (Chart.getChart(ctx)) Chart.getChart(ctx).destroy();
+
+                // Zerstöre altes Chart, falls vorhanden (wichtig für Umschalten)
+                if (Chart.getChart(ctx)) {
+                    Chart.getChart(ctx).destroy();
+                }
                 
                 new Chart(ctx.getContext('2d'), {
                     type: 'radar',
                     data: {
-                        labels: ['Fokus & Konzentration', 'Impulskontrolle', 'Emotionsregulation', 'Stress-Level', 'Reaktivität'],
+                        labels: [
+                            'Fokus & Konzentration', 
+                            'Impulskontrolle', 
+                            'Emotionsregulation', 
+                            'Stress-Level', 
+                            'Reaktivität'
+                        ],
                         datasets: [{
                             label: 'Vor dem Training (Beispiel)',
                             data: [3, 2, 4, 8, 9],
                             fill: true,
-                            backgroundColor: 'rgba(196, 181, 253, 0.2)', borderColor: '#c4b5fd', pointBackgroundColor: '#c4b5fd', pointBorderColor: '#fff'
+                            backgroundColor: 'rgba(196, 181, 253, 0.2)', // violet-300
+                            borderColor: '#c4b5fd', // violet-300
+                            pointBackgroundColor: '#c4b5fd',
+                            pointBorderColor: '#fff'
                         }, {
                             label: 'Nach 8 Wochen (Beispiel)',
                             data: [7, 6, 7, 4, 4],
                             fill: true,
-                            backgroundColor: 'rgba(103, 232, 249, 0.2)', borderColor: '#67e8f9', pointBackgroundColor: '#67e8f9', pointBorderColor: '#fff'
+                            backgroundColor: 'rgba(103, 232, 249, 0.2)', // cyan-300
+                            borderColor: '#67e8f9', // cyan-300
+                            pointBackgroundColor: '#67e8f9',
+                            pointBorderColor: '#fff'
                         }]
                     },
                     options: {
-                        responsive: true, maintainAspectRatio: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'bottom', labels: { color: '#cbd5e1' } },
-                            tooltip: { callbacks: { title: (items) => items[0].label } }
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#cbd5e1' // slate-300
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: (tooltipItems) => {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        return Array.isArray(label) ? label.join(' ') : label;
+                                    }
+                                }
+                            }
                         },
                         scales: {
                             r: {
-                                angleLines: { color: 'rgba(71, 85, 105, 0.5)' },
-                                grid: { color: 'rgba(71, 85, 105, 0.5)' },
-                                pointLabels: { color: '#cbd5e1', font: { size: 12 } },
-                                ticks: { display: false, stepSize: 2, backdropColor: 'transparent' },
-                                suggestedMin: 0, suggestedMax: 10
+                                angleLines: { color: 'rgba(71, 85, 105, 0.5)' }, // slate-600
+                                grid: { color: 'rgba(71, 85, 105, 0.5)' }, // slate-600
+                                pointLabels: {
+                                    color: '#cbd5e1', // slate-300
+                                    font: { size: 12 }
+                                },
+                                ticks: {
+                                    display: false,
+                                    stepSize: 2,
+                                    backdropColor: 'transparent'
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 10
                             }
                         }
                     }
                 });
             }
-            createAdhdChart('adhd-chart-14'); // Initiales Chart
+            
+            // Charts initial erstellen
+            createAdhdChart('adhd-chart-14');
+            // Chart für Erwachsene wird nicht mehr gebraucht, da Sektion entfernt
+            // createAdhdChart('adhd-chart-adult');
+            
+            // --- 4. ATEM-MISSION-APPLET (SEKTION 3) ---
+            
+            // Diese Funktion ist nur für den "Atem-Anker"
+            function setupAtemApp(appId) {
+                const app = document.getElementById(appId);
+                if (!app) return;
 
-            // --- 5. LOGIK FÜR ATEM-ANKER (APP 1) ---
-            function startAppMission(btn) {
-                stopAllTimers(); // Stoppt alle Timer (auch Handbuch)
-
-                const appWrapper = btn.closest('[id^="atem-app-"]');
-                const duration = parseInt(btn.dataset.duration, 10);
-                const appSuffix = appWrapper.id.includes('adult') ? 'adult' : '14';
-
-                const timerDisplay = appWrapper.querySelector('#timer-display-' + appSuffix);
-                const circle = appWrapper.querySelector('#breathing-circle-' + appSuffix);
-                const instruction = appWrapper.querySelector('#instruction-text-' + appSuffix);
-                const missionControl = appWrapper.querySelector('#mission-controls-' + appSuffix);
-                const endMessage = appWrapper.querySelector('#end-message-' + appSuffix);
+                const appSuffix = appId.includes('adult') ? 'adult' : '14';
+                const missionControl = app.querySelector('#mission-controls-' + appSuffix);
+                const missionBtns = app.querySelectorAll('.mission-btn');
+                const timerDisplay = app.querySelector('#timer-display-' + appSuffix);
+                const circle = app.querySelector('.breathing-circle');
+                const instruction = app.querySelector('.breathing-circle span');
+                const endMessage = app.querySelector('#end-message-' + appSuffix);
 
                 const timers = {
                     timerInterval: null,
                     breathingTimeout: null,
                     breathInterval: null,
-                    timeLeft: duration
+                    timeLeft: 0
                 };
-                appTimerStore[appSuffix] = timers; // Speichern für stopAllTimers
+                ankerTimerStore[appId] = timers;
+                
+                function startMission(durationInSeconds) {
+                    stopAllTimers(); // Stoppt ALLE Timer (Anker & Handbuch)
 
-                // Reset aller anderen App-Timer (falls vorhanden)
-                document.querySelectorAll('.breathing-circle span').forEach(inst => inst.textContent = 'WÄHLE ZEIT');
-                document.querySelectorAll('.breathing-circle').forEach(c => c.classList.remove('breathing'));
-                document.querySelectorAll('[id^="mission-controls-"]').forEach(mc => mc.classList.remove('hidden'));
-                document.querySelectorAll('[id^="end-message-"]').forEach(em => em.classList.add('hidden'));
+                    // Setze ALLE Instanzen auf "Wähle Zeit" zurück
+                    document.querySelectorAll('.breathing-circle span').forEach(inst => inst.textContent = 'WÄHLE ZEIT');
+                    document.querySelectorAll('.breathing-circle').forEach(c => c.classList.remove('breathing'));
+                    document.querySelectorAll('[id^="mission-controls-"]').forEach(mc => mc.classList.remove('hidden'));
+                    document.querySelectorAll('[id^="end-message-"]').forEach(em => em.classList.add('hidden'));
+                    document.querySelectorAll('[id^="timer-display-"]').forEach(td => td.textContent = '0:00');
 
-                // UI-Zustand 'Läuft'
-                missionControl.classList.add('hidden');
-                endMessage.classList.add('hidden');
-                updateAppTimerDisplay(timers, timerDisplay);
-                instruction.textContent = 'Atme ein...';
-                circle.classList.add('breathing');
-
-                function breathLoop() {
-                    instruction.textContent = 'Atme ein...';
-                    timers.breathingTimeout = setTimeout(() => {
-                        if (!timers.breathingTimeout) return;
-                        instruction.textContent = '...und atme aus';
-                    }, 4000);
-                }
-                breathLoop();
-                timers.breathInterval = setInterval(breathLoop, 8000);
-
-                timers.timerInterval = setInterval(() => {
-                    timers.timeLeft--;
-                    updateAppTimerDisplay(timers, timerDisplay);
+                    timers.timeLeft = durationInSeconds;
                     
-                    if (timers.timeLeft <= 0) {
-                        stopAllTimers(); // Stoppt alles
-                        timerDisplay.textContent = '0:00';
-                        instruction.textContent = 'GESCHAFFT!';
-                        circle.classList.remove('breathing');
-                        missionControl.classList.remove('hidden');
-                        endMessage.classList.remove('hidden');
+                    missionControl.classList.add('hidden'); 
+                    endMessage.classList.add('hidden');
+                    updateTimerDisplay(timers, timerDisplay); 
+                    instruction.textContent = 'Atme ein...';
+                    circle.classList.add('breathing');
+                    
+                    function breathLoop() {
+                        instruction.textContent = 'Atme ein...';
+                        timers.breathingTimeout = setTimeout(() => {
+                            if (!timers.breathingTimeout) return;
+                            instruction.textContent = '...und atme aus';
+                        }, 4000); 
                     }
-                }, 1000);
+                    breathLoop(); 
+                    timers.breathInterval = setInterval(breathLoop, 8000); 
+                    
+                    timers.timerInterval = setInterval(() => {
+                        timers.timeLeft--;
+                        updateTimerDisplay(timers, timerDisplay);
+                        
+                        if (timers.timeLeft <= 0) {
+                            // Stoppe nur die Timer DIESER Instanz
+                            if (timers.timerInterval) clearInterval(timers.timerInterval);
+                            if (timers.breathInterval) clearInterval(timers.breathInterval);
+                            if (timers.breathingTimeout) clearTimeout(timers.breathingTimeout);
+                            
+                            timerDisplay.textContent = '0:00';
+                            instruction.textContent = 'GESCHAFFT!';
+                            circle.classList.remove('breathing');
+                            missionControl.classList.remove('hidden'); 
+                            endMessage.classList.remove('hidden');
+                        }
+                    }, 1000);
+                }
+                
+                function updateTimerDisplay(instanceTimers, displayElement) {
+                    const minutes = Math.floor(instanceTimers.timeLeft / 60);
+                    let seconds = instanceTimers.timeLeft % 60;
+                    seconds = seconds < 10 ? '0' + seconds : seconds;
+                    displayElement.textContent = `${minutes}:${seconds}`;
+                }
+
+                missionBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const duration = parseInt(btn.getAttribute('data-duration'), 10);
+                        startMission(duration);
+                    });
+                });
             }
 
-            function updateAppTimerDisplay(timers, displayElement) {
-                const minutes = Math.floor(timers.timeLeft / 60);
-                let seconds = timers.timeLeft % 60;
-                seconds = seconds < 10 ? '0' + seconds : seconds;
-                displayElement.textContent = `${minutes}:${seconds}`;
-            }
+            setupAtemApp('atem-app-14');
+            setupAtemApp('atem-app-adult');
 
-            // --- 6. LOGIK FÜR ALTERS-UMSCHALTER ---
-            function switchAgeView(targetId) {
-                stopAllTimers(); // Wichtig: Alle Timer stoppen!
+
+            // --- 5. ALTERS-UMSCHALTER-LOGIK ---
+            function switchAgeView(showId) {
+                stopAllTimers(); // Stoppt alle Timer beim Umschalten
 
                 const btn14 = document.getElementById('age-toggle-14');
                 const btnAdult = document.getElementById('age-toggle-adult');
                 const content14 = document.getElementById('content-14');
                 const contentAdult = document.getElementById('content-adult');
-                
-                const isAdultView = targetId === 'age-toggle-adult';
 
-                btn14.classList.toggle('active', !isAdultView);
-                btn14.setAttribute('aria-selected', !isAdultView);
-                btnAdult.classList.toggle('active', isAdultView);
-                btnAdult.setAttribute('aria-selected', isAdultView);
+                if (showId === 'content-14') {
+                    btn14.classList.add('active');
+                    btn14.setAttribute('aria-selected', 'true');
+                    btnAdult.classList.remove('active');
+                    btnAdult.setAttribute('aria-selected', 'false');
 
-                content14.classList.toggle('hidden', isAdultView);
-                contentAdult.classList.toggle('hidden', !isAdultView);
-
-                if (isAdultView) {
-                    observeNewContent('content-adult');
-                    // Das ADHS-Chart gibt es in der Erwachsenen-Version nicht mehr
-                    // createAdhdChart('adhd-chart-adult'); // Diese Zeile ist nicht mehr nötig
-                } else {
+                    content14.classList.remove('hidden');
+                    contentAdult.classList.add('hidden');
+                    
                     observeNewContent('content-14');
                     createAdhdChart('adhd-chart-14');
+                } else {
+                    btnAdult.classList.add('active');
+                    btnAdult.setAttribute('aria-selected', 'true');
+                    btn14.classList.remove('active');
+                    btn14.setAttribute('aria-selected', 'false');
+
+                    contentAdult.classList.remove('hidden');
+                    content14.classList.add('hidden');
+
+                    observeNewContent('content-adult');
+                    // Das Chart für Erwachsene wird nicht mehr erstellt
                 }
+                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // --- 7. LOGIK FÜR ATEM-HANDBUCH (APP 2) ---
+            document.getElementById('age-toggle-14').addEventListener('click', () => switchAgeView('content-14'));
+            document.getElementById('age-toggle-adult').addEventListener('click', () => switchAgeView('content-adult'));
 
-            // Haptik-Funktion
-            function handbook_doVibrate(duration) {
-                if (navigator.vibrate) navigator.vibrate(duration);
-            }
 
-            // Fokus-Trap
-            const handbook_focusTrapHandler = (e) => {
-                if (e.key !== 'Tab' || !handbookTimerStore.focusableElements.length) return;
-                const first = handbookTimerStore.focusableElements[0];
-                const last = handbookTimerStore.focusableElements[handbookTimerStore.focusableElements.length - 1];
-                if (e.shiftKey && document.activeElement === first) {
-                    last.focus(); e.preventDefault();
-                } else if (!e.shiftKey && document.activeElement === last) {
-                    first.focus(); e.preventDefault();
-                }
-            };
-
-            // Modal Öffnen
-            function handbook_openModal(modalId) {
-                stopAllTimers(); // Alle anderen Timer stoppen
-                const modal = document.getElementById(modalId);
-                if (!modal) return;
-
-                handbook_doVibrate(30);
-                handbookTimerStore.lastFocusedElement = document.activeElement;
-                handbookTimerStore.currentModalId = modalId;
-                
-                modal.classList.remove('hidden');
-                modal.querySelector('.handbook-modal-content-container').classList.remove('closing');
-                modal.classList.remove('closing');
-                
-                document.body.style.overflow = 'hidden';
-                
-                handbookTimerStore.focusableElements = Array.from(
-                    modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-                ).filter(el => el.offsetParent !== null);
-                
-                if (handbookTimerStore.focusableElements.length) handbookTimerStore.focusableElements[0].focus();
-                
-                document.addEventListener('keydown', handbook_focusTrapHandler);
-                handbook_switchTab(modal.querySelector('.handbook-modal-content'), 'praxis');
-            }
-
-            // Modal Schließen
-            function handbook_closeModal(modalId) {
-                const modal = document.getElementById(modalId);
-                if (!modal || !handbookTimerStore.currentModalId) return;
-
-                handbook_stopBreathing();
-                
-                modal.querySelector('.handbook-modal-content-container').classList.add('closing');
-                modal.classList.add('closing');
-                
-                document.body.style.overflow = 'auto';
-                document.removeEventListener('keydown', handbook_focusTrapHandler);
-                
-                if (handbookTimerStore.lastFocusedElement) handbookTimerStore.lastFocusedElement.focus();
-                
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.querySelector('.handbook-modal-content-container').classList.remove('closing');
-                    modal.classList.remove('closing');
-                    if (handbookTimerStore.currentModalId === modalId) {
-                        handbookTimerStore.currentModalId = null;
-                        handbookTimerStore.lastFocusedElement = null;
-                    }
-                }, 200);
-            }
-            
-            // Tab Umschalten
-            function handbook_switchTab(modalContent, tabName) {
-                modalContent.querySelectorAll('.handbook-tab-content').forEach(tab => tab.classList.add('hidden'));
-                modalContent.querySelector(`#handbook-tab-${tabName}`).classList.remove('hidden');
-                
-                const praxisBtn = modalContent.querySelector('.handbook-btn-praxis');
-                const theorieBtn = modalContent.querySelector('.handbook-btn-theorie');
-                const praxisFooter = modalContent.querySelector('[id^="handbook-praxis-footer-"]');
-
-                if (tabName === 'praxis') {
-                    praxisBtn.classList.replace('handbook-tab-inactive', 'handbook-tab-active');
-                    theorieBtn.classList.replace('handbook-tab-active', 'handbook-tab-inactive');
-                    if (praxisFooter) praxisFooter.style.display = 'block';
-                } else {
-                    praxisBtn.classList.replace('handbook-tab-active', 'handbook-tab-inactive');
-                    theorieBtn.classList.replace('handbook-tab-inactive', 'handbook-tab-active');
-                    if (praxisFooter) praxisFooter.style.display = 'none';
-                }
-            }
-            
-            // Zentrale Handbuch-Timer-Logik
-            function handbook_startBreathing(btn) {
-                handbook_stopBreathing(); // Stoppt sich selbst, falls schon was läuft
-                handbook_doVibrate(70);
-                
-                // Config aus dem data-Attribut lesen und parsen
-                const config = JSON.parse(btn.dataset.config);
-                const modalId = handbookTimerStore.currentModalId;
-
-                handbookTimerStore.state = {
-                    visualizerType: config.visualizerType || 'circle',
-                    phases: config.phases,
-                    phaseNames: config.phaseNames,
-                    timerEl: document.getElementById(`handbook-timer-${modalId}`),
-                    statusEl: document.getElementById(`handbook-status-${modalId}`),
-                    visualizerEl: document.getElementById(`handbook-visualizer-${modalId}`),
-                    startBtnEl: btn,
-                    currentPhase: -1,
-                    secondsInPhase: 0,
-                    pulseCount: 0,
-                    totalPulses: config.totalPulses || 0,
-                    bpm: config.bpm || 0
-                };
-                
-                const s = handbookTimerStore.state;
-                s.startBtnEl.textContent = "Läuft... (Zum Stoppen klicken)";
-
-                if (s.visualizerType === 'pulse') {
-                    s.timerEl.textContent = `${s.pulseCount} / ${s.totalPulses}`;
-                    handbookTimerStore.interval = setInterval(handbook_tick, (60 / s.bpm) * 1000);
-                    handbook_tick(); // Sofort starten
-                } else {
-                    handbook_nextPhase(); // Startet den ersten Zyklus
-                    handbookTimerStore.interval = setInterval(handbook_tick, 1000);
-                }
-            }
-
-            function handbook_stopBreathing() {
-                if (handbookTimerStore.interval) {
-                    clearInterval(handbookTimerStore.interval);
-                    handbookTimerStore.interval = null;
-                    handbook_doVibrate(30);
-                }
-                
-                const s = handbookTimerStore.state;
-                if (s.timerEl) s.timerEl.textContent = 'Start';
-                if (s.statusEl) s.statusEl.textContent = '';
-                if (s.startBtnEl) s.startBtnEl.textContent = 'Start';
-                
-                if (s.visualizerEl) {
-                    s.visualizerEl.className = s.visualizerEl.className.split(' ')[0]; // Entfernt alle 'animate-' Klassen
-                    if (s.visualizerType === 'nadi') {
-                        s.visualizerEl.querySelector('.nadi-left').classList.remove('active');
-                        s.visualizerEl.querySelector('.nadi-right').classList.remove('active');
-                    }
-                }
-                
-                handbookTimerStore.state = {}; // Reset state
-            }
-
-            function handbook_tick() {
-                const s = handbookTimerStore.state;
-                
-                if (s.visualizerType === 'pulse') {
-                    if (s.pulseCount >= s.totalPulses) {
-                        handbook_stopBreathing();
-                        s.statusEl.textContent = "Runde beendet. Nachspüren.";
-                        return;
-                    }
-                    s.pulseCount++;
-                    s.timerEl.textContent = `${s.pulseCount} / ${s.totalPulses}`;
-                    handbook_updateVisuals(s.phaseNames[s.pulseCount % 2], 0.3);
-                    handbook_doVibrate(40);
-                    return;
-                }
-            
-                if (s.secondsInPhase > 0) {
-                    s.timerEl.textContent = s.secondsInPhase;
-                    s.secondsInPhase--;
-                } else {
-                    handbook_nextPhase();
-                }
-            }
-
-            function handbook_nextPhase() {
-                const s = handbookTimerStore.state;
-                s.currentPhase = (s.currentPhase + 1) % s.phases.length;
-                s.secondsInPhase = s.phases[s.currentPhase];
-                const phaseName = s.phaseNames[s.currentPhase];
-                const duration = s.phases[s.currentPhase];
-                
-                s.statusEl.textContent = phaseName;
-                s.timerEl.textContent = s.secondsInPhase;
-                s.secondsInPhase--;
-                
-                handbook_doVibrate(50);
-                handbook_updateVisuals(phaseName, duration);
-            }
-            
-            function handbook_updateVisuals(phaseName, duration) {
-                const s = handbookTimerStore.state;
-                const viz = s.visualizerEl;
-                if (!viz) return;
-
-                viz.className = viz.className.split(' ')[0];
-                if (s.visualizerType === 'nadi') {
-                    viz.querySelector('.nadi-left').classList.remove('active');
-                    viz.querySelector('.nadi-right').classList.remove('active');
-                }
-                
-                void viz.offsetWidth; // CSS-Animation-Trigger
-                viz.style.animationDuration = duration + 's';
-                const pName = phaseName.toLowerCase();
-
-                switch(s.visualizerType) {
-                    case 'circle':
-                        if (pName.includes('einatmen')) viz.classList.add('animate-breathe-in');
-                        else if (pName.includes('ausatmen')) viz.classList.add('animate-breathe-out');
-                        else if (pName.includes('halten')) {
-                            viz.classList.add('animate-breathe-hold');
-                            viz.style.animationDuration = '1.5s';
-                        }
-                        break;
-                    case 'nadi':
-                        if (pName.includes('links ein')) viz.querySelector('.nadi-left').classList.add('active');
-                        else if (pName.includes('rechts aus')) viz.querySelector('.nadi-right').classList.add('active');
-                        else if (pName.includes('rechts ein')) viz.querySelector('.nadi-right').classList.add('active');
-                        else if (pName.includes('links aus')) viz.querySelector('.nadi-left').classList.add('active');
-                        break;
-                    case 'pulse':
-                        if (pName.includes('ausatmen')) viz.classList.add('animate-pulse-out');
-                        else if (pName.includes('einatmen')) viz.classList.add('animate-pulse-in');
-                        viz.style.animationDuration = '0.3s';
-                        break;
-                    case 'vibrate':
-                        viz.classList.add('animate-vibrate');
-                        viz.style.animationDuration = '0.1s';
-                        break;
-                }
-            }
-
-            // --- 8. ATEM-HANDBUCH MODALE DYNAMISCH ERSTELLEN ---
-            function createModal(id, title, color, praxisContent, theorieContent) {
+            // --- 6. ATEM-HANDBUCH MODALE ERSTELLEN ---
+            function handbook_createModal(id, title, color, praxisContent, theorieContent) {
                 const modal = document.createElement('div');
                 modal.id = id;
-                modal.className = "handbook-modal-backdrop fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center hidden p-4 z-[110]"; // Höherer z-index
+                modal.className = "handbook-modal-backdrop fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center hidden p-4 z-50";
                 modal.setAttribute('role', 'dialog');
                 modal.setAttribute('aria-modal', 'true');
                 modal.setAttribute('aria-labelledby', `handbook-modal-title-${id}`);
+                modal.onclick = (e) => handbook_closeModal(id, e);
                 
-                // JSON-Config für Start-Button (nur wenn Praxis-Inhalt einen Visualizer hat)
-                let config = {};
-                if (id === 'modal-478') config = { visualizerType: 'circle', phases: [4, 7, 8], phaseNames: ['Einatmen', 'Halten', 'Ausatmen'] };
-                if (id === 'modal-box') config = { visualizerType: 'circle', phases: [4, 4, 4, 4], phaseNames: ['Einatmen', 'Halten', 'Ausatmen', 'Halten'] };
-                if (id === 'modal-nadi') config = { visualizerType: 'nadi', phases: [4, 4, 6, 4, 4, 6], phaseNames: ['Links Einatmen', 'Halten', 'Rechts Ausatmen', 'Rechts Einatmen', 'Halten', 'Links Ausatmen'] };
-                if (id === 'modal-kapalabhati') config = { visualizerType: 'pulse', phases: [1, 1], phaseNames: ['Ausatmen', 'Einatmen (passiv)'], totalPulses: 20, bpm: 60 };
-                if (id === 'modal-bhramari') config = { visualizerType: 'vibrate', phases: [5, 8], phaseNames: ['Einatmen', 'Summen (Ausatmen)'] };
-                if (id === 'modal-bhastrika') config = { visualizerType: 'pulse', phases: [1, 1], phaseNames: ['Ausatmen', 'Einatmen'], totalPulses: 10, bpm: 40 };
-                
-                const configString = JSON.stringify(config).replace(/"/g, "'"); // JS-sicher machen
-
                 modal.innerHTML = `
                     <div class="handbook-modal-content-container w-full max-w-2xl">
-                        <div class="handbook-modal-content bg-gray-800 border border-gray-700 rounded-2xl shadow-xl max-h-[90vh] flex flex-col">
-                            <!-- Header -->
-                            <div class="flex justify-between items-center p-6 border-b border-gray-700">
-                                <h3 id="handbook-modal-title-${id}" class="text-2xl font-bold text-white">${title}</h3>
-                                <!-- GEÄNDERT: .handbook-close-btn Klasse statt onclick -->
-                                <button class="handbook-close-btn text-gray-400 hover:text-gray-300" data-modal-id="${id}" aria-label="Dialog schließen">
-                                    <ion-icon name="close-outline" class="text-3xl"></ion-icon>
-                                </button>
-                            </div>
-                            
-                            <!-- Tab-Buttons -->
-                            <div class="flex p-2 bg-gray-900">
-                                <!-- GEÄNDERT: .handbook-tab-button Klasse und data-tab-target statt onclick -->
-                                <button class="handbook-tab-button handbook-btn-praxis handbook-tab-active w-1/2 py-3 px-4 rounded-lg font-semibold transition-colors duration-200" data-tab-target="praxis">
-                                    <ion-icon name="play-circle-outline" class="text-xl mr-2 -mb-1"></ion-icon> Praxis
-                                </button>
-                                <button class="handbook-tab-button handbook-btn-theorie handbook-tab-inactive w-1/2 py-3 px-4 rounded-lg font-semibold transition-colors duration-200" data-tab-target="theorie">
-                                    <ion-icon name="document-text-outline" class="text-xl mr-2 -mb-1"></ion-icon> Theorie
-                                </button>
-                            </div>
-                            
-                            <!-- Tab-Inhalt -->
-                            <div class="overflow-y-auto p-8">
-                                <div id="handbook-tab-praxis" class="handbook-tab-content space-y-6">
-                                    ${praxisContent.replace(/id="/g, `id="handbook-`)} 
-                                </div>
-                                <div id="handbook-tab-theorie" class="handbook-tab-content hidden space-y-4 prose prose-invert max-w-none">
-                                    ${theorieContent}
-                                </div>
-                            </div>
-                            
-                            <!-- Footer mit Start/Stop Button -->
-                            <div id="handbook-praxis-footer-${id}" class="p-6 border-t border-gray-700 mt-auto">
-                                <!-- GEÄNDERT: .handbook-start-btn Klasse und data-config statt id/onclick -->
-                                <button class="handbook-start-btn w-full bg-${color}-600 hover:bg-${color}-700 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-lg focus:outline-none focus:ring-4 focus:ring-${color}-400 focus:ring-opacity-50"
-                                        data-config="${configString}">
-                                    Start
-                                </button>
-                            </div>
+                    <div class="handbook-modal-content bg-gray-800 border border-gray-700 rounded-2xl shadow-xl max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+                        <!-- Header -->
+                        <div class="flex justify-between items-center p-6 border-b border-gray-700">
+                        <h3 id="handbook-modal-title-${id}" class="text-2xl font-bold text-white">${title}</h3>
+                        <button onclick="handbook_closeModal('${id}')" class="text-gray-400 hover:text-gray-300" aria-label="Dialog schließen">
+                            <ion-icon name="close-outline" class="text-3xl"></ion-icon>
+                        </button>
                         </div>
+                        
+                        <!-- Tab-Buttons -->
+                        <div class="flex p-2 bg-gray-900">
+                        <button id="handbook-btn-praxis-${id}" class="handbook-tab-button handbook-tab-active w-1/2 py-3 px-4 rounded-lg font-semibold transition-colors duration-200" onclick="handbook_switchTab('${id}', 'praxis')">
+                            <ion-icon name="play-circle-outline" class="text-xl mr-2 -mb-1"></ion-icon> Praxis
+                        </button>
+                        <button id="handbook-btn-theorie-${id}" class="handbook-tab-button handbook-tab-inactive w-1/2 py-3 px-4 rounded-lg font-semibold transition-colors duration-200" onclick="handbook_switchTab('${id}', 'theorie')">
+                            <ion-icon name="document-text-outline" class="text-xl mr-2 -mb-1"></ion-icon> Theorie
+                        </button>
+                        </div>
+                        
+                        <!-- Tab-Inhalt -->
+                        <div class="overflow-y-auto p-8">
+                        <!-- Praxis-Tab -->
+                        <div id="handbook-tab-praxis-${id}" class="handbook-tab-content space-y-6">
+                            ${praxisContent}
+                        </div>
+                        
+                        <!-- Theorie-Tab -->
+                        <div id="handbook-tab-theorie-${id}" class="handbook-tab-content hidden space-y-4 prose prose-invert max-w-none">
+                            ${theorieContent}
+                        </div>
+                        </div>
+                        
+                        <!-- Footer mit Start/Stop Button (nur im Praxis-Tab sichtbar) -->
+                        <div id="handbook-praxis-footer-${id}" class="p-6 border-t border-gray-700 mt-auto">
+                        <!-- NEUE, EINDEUTIGE ID FÜR JEDEN BUTTON -->
+                        <button id="start-btn-handbook-${id}" class="handbook-start-btn w-full bg-${color}-600 hover:bg-${color}-700 text-white font-bold py-4 px-8 rounded-lg transition duration-300 text-lg focus:outline-none focus:ring-4 focus:ring-${color}-400 focus:ring-opacity-50">
+                            Start
+                        </button>
+                        </div>
+                    </div>
                     </div>
                 `;
                 document.body.appendChild(modal);
             }
 
-            // Alle Modale des Handbuchs erstellen
-            function createAllModals() {
-                createModal(
+            function handbook_createModals() {
+                // --- KATEGORIE 1 ---
+                handbook_createModal(
                     'modal-478', '4-7-8 Atemtechnik', 'teal',
                     `<!-- Praxis-Inhalt 4-7-8 -->
                     <p class="text-gray-300 text-lg text-center mb-8">Folge dem visuellen Guide: 4 Sek. einatmen, 7 Sek. halten, 8 Sek. ausatmen.</p>
                     <div class="flex flex-col items-center justify-center h-56">
-                    <div id="handbook-visualizer-modal-478" class="visual-guide-circle bg-teal-600">
+                    <div id="handbook-visualizer-modal-478" class="handbook-visual-guide-circle bg-teal-600">
                         <span id="handbook-timer-modal-478" class="text-5xl font-bold text-white z-10">Start</span>
                     </div>
                     <span id="handbook-status-modal-478" class="text-3xl font-semibold text-white mt-12 h-10"></span>
                     </div>`,
                     `<!-- Theorie-Inhalt 4-7-8 -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Schnelle Sedierung des Nervensystems. Klinisch eingesetzt gegen Einschlafprobleme, Angstzustände und Panikattacken.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Der Kern ist das 2:1 Ausatem-Einatem-Verhältnis (8 Sek. aus, 4 Sek. ein). Diese dominante, verlängerte Ausatmung maximiert die parasympathische Aktivierung (Vagusnerv). Die 7-sekündige Atempause (Kumbhaka) erhöht kurzzeitig den CO2-Spiegel, was leicht sedierend wirkt und die glatte Muskulatur entspannt.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Detaillierte Schritt-für-Schritt-Anleitung</h4>
-                    <ol class="list-decimal list-inside space-y-2">
-                    <li>Bequeme Haltung (Sitzen oder Liegen).</li>
-                    <li>Zungenspitze an den Gaumen, direkt hinter die oberen Schneidezähne. Dort lassen.</li>
-                    <li>Vollständig durch den Mund ausatmen (hörbares "Whoosh"-Geräusch).</li>
-                    <li>Mund schließen, leise durch die Nase einatmen (bis 4 zählen).</li>
-                    <li>Atem anhalten (bis 7 zählen).</li>
-                    <li>Hörbar ("Whoosh") durch den Mund ausatmen (bis 8 zählen).</li>
-                    <li>Dies ist ein Zyklus. Für insgesamt vier Zyklen wiederholen.</li>
-                    </ol>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Schnelle Sedierung des Nervensystems. Klinisch eingesetzt gegen Einschlafprobleme, Angstzustände und Panikattacken.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Der Kern ist das 2:1 Ausatem-Einatem-Verhältnis (8 Sek. aus, 4 Sek. ein). Diese dominante, verlängerte Ausatmung maximiert die parasympathische Aktivierung (Vagusnerv). Die 7-sekündige Atempause (Kumbhaka) erhöht kurzzeitig den CO2-Spiegel, was leicht sedierend wirkt und die glatte Muskulatur entspannt.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Detaillierte Schritt-für-Schritt-Anleitung</h4>
+                     <ol class="list-decimal list-inside space-y-2">
+                       <li>Bequeme Haltung (Sitzen oder Liegen).</li>
+                       <li>Zungenspitze an den Gaumen, direkt hinter die oberen Schneidezähne. Dort lassen.</li>
+                       <li>Vollständig durch den Mund ausatmen (hörbares "Whoosh"-Geräusch).</li>
+                       <li>Mund schließen, leise durch die Nase einatmen (bis 4 zählen).</li>
+                       <li>Atem anhalten (bis 7 zählen).</li>
+                       <li>Hörbar ("Whoosh") durch den Mund ausatmen (bis 8 zählen).</li>
+                       <li>Dies ist ein Zyklus. Für insgesamt vier Zyklen wiederholen.</li>
+                     </ol>`
                 );
                 
-                createModal(
+                handbook_createModal(
                     'modal-sigh', 'Physiological Sigh', 'teal',
                     `<!-- Praxis-Inhalt Sigh -->
-                    <p class="text-gray-300 text-lg text-center mb-6">Kein Timer nötig. Dies ist eine mechanische Übung für akuten Stress. Führe 1-3 Zyklen durch.</p>
-                    <div class="bg-teal-900 border border-teal-700 rounded-lg p-6 space-y-4">
-                    <h4 class="text-xl font-bold text-teal-300">Anleitung (1-3 Zyklen)</h4>
-                    <div class="flex items-start space-x-4">
-                        <span class="text-3xl font-bold text-teal-400">1.</span>
-                        <p class="text-gray-200"><strong class="text-white">Doppeltes Einatmen:</strong> Atme tief durch die Nase ein. Wenn die Lungen voll sind, atme (ohne auszuatmen) ein zweites Mal kurz und kräftig durch die Nase nach.</p>
-                    </div>
-                    <div class="flex items-start space-x-4">
-                        <span class="text-3xl font-bold text-teal-400">2.</span>
-                        <p class="text-gray-200"><strong class="text-white">Langes Ausatmen:</strong> Atme anschließend langsam und vollständig durch den Mund aus.</p>
-                    </div>
-                    </div>`,
+                 <p class="text-gray-200"><strong class="text-white">Langes Ausatmen:</strong> Atme anschließend langsam und vollständig durch den Mund aus.</p>
+               </div>
+             </div>`,
                     `<!-- Theorie-Inhalt Sigh -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Schnellstmöglicher Abbau von akutem Stress, Anspannung und dem Gefühl von "Lufthunger".</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Dies ist ein primär mechanischer Prozess. Unter Stress kollabieren die kleinsten Lungenbläschen (Alveolen), was den Gasaustausch reduziert und den CO2-Spiegel ansteigen lässt. Dies signalisiert dem Gehirn "Lufthunger" oder Panik.</p>
-                    <p>Der "Physiological Sigh" (doppeltes Einatmen) erzeugt genügend Druck, um diese kollabierten Alveolen mechanisch wieder zu öffnen (re-inflation). Die anschließende lange Ausatmung transportiert das angestaute CO2 ab. Das Gehirn empfängt ein sofortiges "Alles-in-Ordnung"-Signal.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Klinischer Kontext</h4>
-                    <p>Eine Stanford-Studie (Cyclic Sighing) fand, dass diese Methode Angstzustände schneller und nachhaltiger reduzierte als andere Atemtechniken oder Achtsamkeitsmeditation.</p>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Schnellstmöglicher Abbau von akutem Stress, Anspannung und dem Gefühl von "Lufthunger".</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Dies ist ein primär mechanischer Prozess. Unter Stress kollabieren die kleinsten Lungenbläschen (Alveolen), was den Gasaustausch reduziert und den CO2-Spiegel ansteigen lässt. Dies signalisiert dem Gehirn "Lufthunger" oder Panik.</p>
+                     <p>Der "Physiological Sigh" (doppeltes Einatmen) erzeugt genügend Druck, um diese kollabierten Alveolen mechanisch wieder zu öffnen (re-inflation). Die anschließende lange Ausatmung transportiert das angestaute CO2 ab. Das Gehirn empfängt ein sofortiges "Alles-in-Ordnung"-Signal.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Klinischer Kontext</h4>
+                     <p>Eine Stanford-Studie (Cyclic Sighing) fand, dass diese Methode Angstzustände schneller und nachhaltiger reduzierte als andere Atemtechniken oder Achtsamkeitsmeditation.</p>`
                 );
                 
-                createModal(
+                handbook_createModal(
                     'modal-bhramari', 'Bhramari (Bienensummen)', 'teal',
                     `<!-- Praxis-Inhalt Bhramari -->
                     <p class="text-gray-300 text-lg text-center mb-8">Fokus auf Vibration. 5-10 Zyklen lang summen.</p>
                     <div class="flex flex-col items-center justify-center h-56">
-                    <div id="handbook-visualizer-modal-bhramari" class="visual-guide-circle bg-teal-600">
+                    <div id="handbook-visualizer-modal-bhramari" class="handbook-visual-guide-circle bg-teal-600">
                         <span id="handbook-timer-modal-bhramari" class="text-5xl font-bold text-white z-10"><ion-icon name="musical-notes-outline"></ion-icon></span>
                     </div>
-                    <span id="handbook-status-modal-bhramari" class="text-3xl font-semibold text-white mt-12 h-10"></span>
-                    </div>`,
+               <span id="handbook-status-modal-bhramari" class="text-3xl font-semibold text-white mt-12 h-10"></span>
+             </div>`,
                     `<!-- Theorie-Inhalt Bhramari -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Reduktion von "Gedankenkarussell", Wut und Ängsten. Effektiv bei der Senkung von hohem Blutdruck.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Bhramari nutzt Vibration zur direkten Stimulation des Vagusnervs. Der Vagusnerv (Hauptakteur des Parasympathikus) versorgt u.a. Kehlkopf, Rachen und Teile des Ohrs. Das erzeugte Summen versetzt genau diese Bereiche in eine hochfrequente Vibration. Dies wirkt wie eine direkte, interne Massage auf die parasympathischen Nervenenden und löst eine starke "Rest and Digest"-Reaktion aus (messbare Reduktion von Herzfrequenz und Blutdruck).</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Anleitung (Shanmukhi Mudra)</h4>
-                    <ol class="list-decimal list-inside space-y-2">
-                    <li>Sitzen Sie aufrecht. Optional das Shanmukhi Mudra einnehmen:</li>
-                    <li>Ohren mit Daumen verschließen (Druck auf Tragus).</li>
-                    <li>Zeigefinger sanft auf die geschlossenen Augenlider.</li>
-                    <li>Mittelfinger neben die Nasenflügel.</li>
-                    <li>Ringfinger über, kleine Finger unter die Lippen.</li>
-                    <li>Tief durch die Nase einatmen.</li>
-                    <li>Beim Ausatmen (Mund geschlossen) einen langgezogenen "Mmmmmm"-Ton (Biene) erzeugen.</li>
-                    <li>Auf die Vibration im Kopf, Rachen und Brustkorb konzentrieren. 5-10 Zyklen.</li>
-                    </ol>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Reduktion von "Gedankenkarussell", Wut und Ängsten. Effektiv bei der Senkung von hohem Blutdruck.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Bhramari nutzt Vibration zur direkten Stimulation des Vagusnervs. Der Vagusnerv (Hauptakteur des Parasympathikus) versorgt u.a. Kehlkopf, Rachen und Teile des Ohrs. Das erzeugte Summen versetzt genau diese Bereiche in eine hochfrequente Vibration. Dies wirkt wie eine direkte, interne Massage auf die parasympathischen Nervenenden und löst eine starke "Rest and Digest"-Reaktion aus (messbare Reduktion von Herzfrequenz und Blutdruck).</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Anleitung (Shanmukhi Mudra)</h4>
+                     <ol class="list-decimal list-inside space-y-2">
+                       <li>Sitzen Sie aufrecht. Optional das Shanmukhi Mudra einnehmen:</li>
+                       <li>Ohren mit Daumen verschließen (Druck auf Tragus).</li>
+                       <li>Zeigefinger sanft auf die geschlossenen Augenlider.</li>
+                       <li>Mittelfinger neben die Nasenflügel.</li>
+                       <li>Ringfinger über, kleine Finger unter die Lippen.</li>
+                       <li>Tief durch die Nase einatmen.</li>
+                       <li>Beim Ausatmen (Mund geschlossen) einen langgezogenen "Mmmmmm"-Ton (Biene) erzeugen.</li>
+                       <li>Auf die Vibration im Kopf, Rachen und Brustkorb konzentrieren. 5-10 Zyklen.</li>
+                     </ol>`
                 );
 
-                createModal(
+                handbook_createModal(
                     'modal-zwerchfell', 'Zwerchfellatmung (Fundament)', 'gray', 
                     `<!-- Praxis-Inhalt Zwerchfell -->
-                    <p class="text-gray-300 text-lg text-center mb-6">Kein Timer nötig. Dies ist eine fundamentale Übung, um das natürliche Atemmuster wiederherzustellen.</p>
-                    <div class="bg-gray-700 border border-gray-600 rounded-lg p-6 space-y-4">
-                    <h4 class="text-xl font-bold text-white">Anleitung (Am besten liegend)</h4>
-                    <div class="flex items-start space-x-4">
-                        <span class="text-3xl font-bold text-gray-400">1.</span>
-                        <p class="text-gray-200"><strong class="text-white">Hände positionieren:</strong> Eine Hand auf den Bauch (nahe Nabel), die andere Hand auf die Brust.</p>
-                    </div>
-                    <div class="flex items-start space-x-4">
-                        <span class="text-3xl font-bold text-gray-400">2.</span>
-                        <p class="text-gray-200"><strong class="text-white">Einatmen:</strong> Tief durch die Nase einatmen. Die Hand auf dem Bauch sollte sich deutlich heben, während die Hand auf der Brust möglichst ruhig bleibt.</p>
-                    </div>
-                    <div class="flex items-start space-x-4">
-                        <span class="text-3xl font-bold text-gray-400">3.</span>
-                        <p class="text-gray-200"><strong class="text-white">Ausatmen:</strong> Langsam ausatmen (Nase oder Lippenbremse). Die Hand auf dem Bauch senkt sich wieder.</p>
-                    </div>
-                    </div>`, 
+                 <p class="text-gray-200"><strong class="text-white">Ausatmen:</strong> Langsam ausatmen (Nase oder Lippenbremse). Die Hand auf dem Bauch senkt sich wieder.</p>
+               </div>
+             </div>`, 
                     `<!-- Theorie-Inhalt Zwerchfell -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Etablierung des natürlichen, effizientesten Atemmusters, grundlegende Stressreduktion und Maximierung der Sauerstoffaufnahme.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Die Zwerchfellatmung ist das fundamentale Werkzeug zur Umkehrung des physiologischen Stress-Atem-Musters. In Stresssituationen verfällt der Körper reflexartig in eine flache, schnelle Brustatmung. Dieses Muster ist ineffizient (Gasaustausch findet primär unten statt) und signalisiert dem Gehirn "Gefahr", was die sympathische Stressreaktion aufrechterhält.</p>
-                    <p>Die Zwerchfellatmung (Bauchatmung) ist das physiologische Gegenteil. Sie ist tief, langsam und nutzt das Zwerchfell. Dieses Muster signalisiert dem Gehirn "Sicherheit" und aktiviert den Parasympathikus.</p>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Etablierung des natürlichen, effizientesten Atemmusters, grundlegende Stressreduktion und Maximierung der Sauerstoffaufnahme.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Die Zwerchfellatmung ist das fundamentale Werkzeug zur Umkehrung des physiologischen Stress-Atem-Musters. In Stresssituationen verfällt der Körper reflexartig in eine flache, schnelle Brustatmung. Dieses Muster ist ineffizient (Gasaustausch findet primär unten statt) und signalisiert dem Gehirn "Gefahr", was die sympathische Stressreaktion aufrechterhält.</p>
+                     <p>Die Zwerchfellatmung (Bauchatmung) ist das physiologische Gegenteil. Sie ist tief, langsam und nutzt das Zwerchfell. Dieses Muster signalisiert dem Gehirn "Sicherheit" und aktiviert den Parasympathikus.</p>`
                 );
                 
-                createModal(
+                handbook_createModal(
                     'modal-lippenbremse', 'Lippenbremse (Klinisch)', 'gray', 
                     `<!-- Praxis-Inhalt Lippenbremse -->
-                    <p class="text-gray-300 text-lg text-center mb-6">Eine klinische Technik zur Beruhigung und Verbesserung der Sauerstoffaufnahme. Kann jederzeit angewendet werden.</p>
-                    <div class="bg-gray-700 border border-gray-600 rounded-lg p-6 space-y-4">
-                    <h4 class="text-xl font-bold text-white">Anleitung</h4>
-                    <div class="flex items-start space-x-4">
-                        <span class="text-3xl font-bold text-gray-400">1.</span>
-                        <p class="text-gray-200"><strong class="text-white">Einatmen:</strong> Normal oder tief einatmen.</p>
-                    </div>
-                    <div class="flex items-start space-x-4">
-                        <span class="text-3xl font-bold text-gray-400">2.</span>
-                        <p class="text-gray-200"><strong class="text-white">Ausatmen (Bremsen):</strong> Lippen leicht aufeinanderlegen, als wollte man eine Kerzenflamme sanft zum Flackern bringen (nicht auspusten). Die Luft langsam und kontrolliert gegen diesen leichten Widerstand ausströmen lassen.</p>
-                    </div>
-                    <p class="text-gray-300">Tipp: Ideal in Kombination mit dem "Kutschersitz" (Ellenbogen auf Knie gestützt), um die Atemhilfsmuskulatur zu entlasten.</p>
-                    </div>`, 
+                 <p class="text-gray-300">Tipp: Ideal in Kombination mit dem "Kutschersitz" (Ellenbogen auf Knie gestützt), um die Atemhilfsmuskulatur zu entlasten.</p>
+               </div>
+             </div>`, 
                     `<!-- Theorie-Inhalt Lippenbremse -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Beruhigung der Atmung nach physischer Belastung, Verminderung von Hustenreiz und Verbesserung der Sauerstoffaufnahme. Wird klinisch häufig in der Atemtherapie (z.B. bei COPD) eingesetzt, ist aber auch bei akuter Stressreaktion wirksam.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Das Ausatmen gegen einen leichten Widerstand (die "gebremsten" Lippen) erzeugt einen leichten positiven Druck in den Atemwegen (PEEP - Positive End-Expiratory Pressure). Dieser sanfte Gegendruck verhindert, dass die kleinen Alveolen kollabieren. Dies verlängert automatisch die Ausatemphase (aktiviert den Parasympathikus) und verbessert den Gasaustausch, da die Atemwege länger offen gehalten werden.</p>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Beruhigung der Atmung nach physischer Belastung, Verminderung von Hustenreiz und Verbesserung der Sauerstoffaufnahme. Wird klinisch häufig in der Atemtherapie (z.B. bei COPD) eingesetzt, ist aber auch bei akuter Stressreaktion wirksam.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Das Ausatmen gegen einen leichten Widerstand (die "gebremsten" Lippen) erzeugt einen leichten positiven Druck in den Atemwegen (PEEP - Positive End-Expiratory Pressure). Dieser sanfte Gegendruck verhindert, dass die kleinen Alveolen kollabieren. Dies verlängert automatisch die Ausatemphase (aktiviert den Parasympathikus) und verbessert den Gasaustausch, da die Atemwege länger offen gehalten werden.</p>`
                 );
 
-                createModal(
+                // --- KATEGORIE 2 ---
+                handbook_createModal(
                     'modal-box', 'Box Breathing (4-4-4-4)', 'blue',
                     `<!-- Praxis-Inhalt Box -->
                     <p class="text-gray-300 text-lg text-center mb-8">Folge dem visuellen Guide: 4 Sek. ein, 4 Sek. halten, 4 Sek. aus, 4 Sek. halten.</p>
                     <div class="flex flex-col items-center justify-center h-56">
-                    <div id="handbook-visualizer-modal-box" class="visual-guide-circle bg-blue-600">
+                    <div id="handbook-visualizer-modal-box" class="handbook-visual-guide-circle bg-blue-600">
                         <span id="handbook-timer-modal-box" class="text-5xl font-bold text-white z-10">Start</span>
                     </div>
-                    <span id="handbook-status-modal-box" class="text-3xl font-semibold text-white mt-12 h-10"></span>
-                    </div>`,
+               <span id="handbook-status-modal-box" class="text-3xl font-semibold text-white mt-12 h-10"></span>
+             </div>`,
                     `<!-- Theorie-Inhalt Box -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Stressreduktion bei gleichzeitiger Erhöhung von Konzentration, mentaler Klarheit und Fokussierung. Bekannt durch Spezialeinheiten (z.B. US Navy SEALs) für Ruhe unter hohem Druck.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <ol class="list-decimal list-inside space-y-2">
-                    <li><strong>Rhythmische Kohärenz:</strong> Der exakte Rhythmus (4-4-4-4) synchronisiert Herzschlag und Atmung. Dies stabilisiert das VNS und reduziert die "Alarmbereitschaft".</li>
-                    <li><strong>Training der CO2-Toleranz:</strong> Die zwei Atempause-Phasen erhöhen kontrolliert den CO2-Spiegel. Eine Panikreaktion ist oft mit einer niedrigen CO2-Toleranz verbunden ("Erstickungsgefahr"). Durch regelmäßiges Training wird der Hirnstamm darauf trainiert, höhere CO2-Level zu tolerieren, ohne Panik auszulösen. Dies erhöht die allgemeine Stressresilienz.</li>
-                    </ol>
-                    <h4 class="text-xl font-bold text-white mt-4">Anleitung</h4>
-                    <ul class="list-disc list-inside space-y-2">
-                    <li>Phase 1: 4 Sek. durch die Nase einatmen.</li>
-                    <li>Phase 2: 4 Sek. Atem anhalten (Lungen voll).</li>
-                    <li>Phase 3: 4 Sek. ausatmen.</li>
-                    <li>Phase 4: 4 Sek. Atem anhalten (Lungen leer).</li>
-                    <li>Für 5-10 Minuten wiederholen.</li>
-                    </ul>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Stressreduktion bei gleichzeitiger Erhöhung von Konzentration, mentaler Klarheit und Fokussierung. Bekannt durch Spezialeinheiten (z.B. US Navy SEALs) für Ruhe unter hohem Druck.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <ol class="list-decimal list-inside space-y-2">
+                       <li><strong>Rhythmische Kohärenz:</strong> Der exakte Rhythmus (4-4-4-4) synchronisiert Herzschlag und Atmung. Dies stabilisiert das VNS und reduziert die "Alarmbereitschaft".</li>
+                       <li><strong>Training der CO2-Toleranz:</strong> Die zwei Atempause-Phasen erhöhen kontrolliert den CO2-Spiegel. Eine Panikreaktion ist oft mit einer niedrigen CO2-Toleranz verbunden ("Erstickungsgefahr"). Durch regelmäßiges Training wird der Hirnstamm darauf trainiert, höhere CO2-Level zu tolerieren, ohne Panik auszulösen. Dies erhöht die allgemeine Stressresilienz.</li>
+                     </ol>
+                     <h4 class="text-xl font-bold text-white mt-4">Anleitung</h4>
+                     <ul class="list-disc list-inside space-y-2">
+                       <li>Phase 1: 4 Sek. durch die Nase einatmen.</li>
+                       <li>Phase 2: 4 Sek. Atem anhalten (Lungen voll).</li>
+                       <li>Phase 3: 4 Sek. ausatmen.</li>
+                       <li>Phase 4: 4 Sek. Atem anhalten (Lungen leer).</li>
+                       <li>Für 5-10 Minuten wiederholen.</li>
+                     </ul>`
                 );
                 
-                createModal(
+                handbook_createModal(
                     'modal-nadi', 'Nadi Shodhana (Wechselatmung)', 'blue',
                     `<!-- Praxis-Inhalt Nadi -->
                     <p class="text-gray-300 text-lg text-center mb-8">Folge dem visuellen Guide für den Rhythmus (4-4-6). Nutze deine Hand (Vishnu Mudra) für die Nasenlöcher.</p>
                     <div class="flex flex-col items-center justify-center h-56">
-                    <div id="handbook-visualizer-modal-nadi" class="nadi-container w-48">
-                        <div class="nadi-channel nadi-left"></div>
-                        <div class="nadi-channel nadi-right"></div>
+                    <div id="handbook-visualizer-modal-nadi" class="handbook-nadi-container w-48">
+                        <div class="handbook-nadi-channel handbook-nadi-left"></div>
+                        <div class="handbook-nadi-channel handbook-nadi-right"></div>
                     </div>
                     <span id="handbook-timer-modal-nadi" class="text-5xl font-bold text-white mt-8">Start</span>
                     <span id="handbook-status-modal-nadi" class="text-2xl font-semibold text-white mt-6 h-10"></span>
-                    </div>`,
+             </div>`,
                     `<!-- Theorie-Inhalt Nadi -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Harmonisierung des Nervensystems, Beruhigung eines überaktiven Geistes ("Gedankenkarussell") bei gleichzeitiger Steigerung der mentalen Klarheit. Ideal bei Nervosität oder zur Prüfungsvorbereitung.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Der primäre Effekt resultiert aus der erzwungenen Verlangsamung und Rhythmisierung des Atems. Der mentale Fokus, der für die Handhaltung (Mudra) und das Zählen benötigt wird, unterbricht den Gedankenfluss und zentriert den Geist, was zu einer Ausbalancierung des VNS führt.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Anleitung (Vishnu Mudra)</h4>
-                    <ol class="list-decimal list-inside space-y-2">
-                    <li>Rechte Hand: Zeige- und Mittelfinger zur Handfläche beugen. Daumen, Ringfinger, kleiner Finger sind gestreckt.</li>
-                    <li>Rechtes Nasenloch mit Daumen verschließen.</li>
-                    <li>Links einatmen (4 Sek. zählen).</li>
-                    <li>Linkes Nasenloch mit Ringfinger verschließen (Atem 4 Sek. halten).</li>
-                    <li>Rechtes Nasenloch öffnen, rechts ausatmen (6 Sek. zählen).</li>
-                    <li>Rechts einatmen (4 Sek.).</li>
-                    <li>Rechtes Nasenloch verschließen (Atem 4 Sek. halten).</li>
-                    <li>Links ausatmen (6 Sek.).</li>
-                    <li>Dies ist eine Runde. 5-10 Minuten fortfahren.</li>
-                    </ol>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Harmonisierung des Nervensystems, Beruhigung eines überaktiven Geistes ("Gedankenkarussell") bei gleichzeitiger Steigerung der mentalen Klarheit. Ideal bei Nervosität oder zur Prüfungsvorbereitung.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Der primäre Effekt resultiert aus der erzwungenen Verlangsamung und Rhythmisierung des Atems. Der mentale Fokus, der für die Handhaltung (Mudra) und das Zählen benötigt wird, unterbricht den Gedankenfluss und zentriert den Geist, was zu einer Ausbalancierung des VNS führt.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Anleitung (Vishnu Mudra)</h4>
+                     <ol class="list-decimal list-inside space-y-2">
+                       <li>Rechte Hand: Zeige- und Mittelfinger zur Handfläche beugen. Daumen, Ringfinger, kleiner Finger sind gestreckt.</li>
+                       <li>Rechtes Nasenloch mit Daumen verschließen.</li>
+                       <li>Links einatmen (4 Sek. zählen).</li>
+                       <li>Linkes Nasenloch mit Ringfinger verschließen (Atem 4 Sek. halten).</li>
+                       <li>Rechtes Nasenloch öffnen, rechts ausatmen (6 Sek. zählen).</li>
+                       <li>Rechts einatmen (4 Sek.).</li>
+                       <li>Rechtes Nasenloch verschließen (Atem 4 Sek. halten).</li>
+                       <li>Links ausatmen (6 Sek.).</li>
+                       <li>Dies ist eine Runde. 5-10 Minuten fortfahren.</li>
+                     </ol>`
                 );
 
-                createModal(
+                // --- KATEGORIE 3 ---
+                handbook_createModal(
                     'modal-kapalabhati', 'Kapalabhati (Feueratem)', 'orange',
                     `<!-- Praxis-Inhalt Kapalabhati -->
                     <p class="text-gray-300 text-lg text-center mb-8">Aktive Ausatmung (Bauch rein), passive Einatmung. Ca. 1 Stoß pro Sekunde.</p>
                     <div class="flex flex-col items-center justify-center h-56">
-                    <div id="handbook-visualizer-modal-kapalabhati" class="visual-guide-circle bg-orange-500 opacity-70">
+                    <div id="handbook-visualizer-modal-kapalabhati" class="handbook-visual-guide-circle bg-orange-500 opacity-70">
                         <span id="handbook-timer-modal-kapalabhati" class="text-5xl font-bold text-white z-10">0 / 20</span>
                     </div>
-                    <span id="handbook-status-modal-kapalabhati" class="text-3xl font-semibold text-white mt-12 h-10">Stoßweise Ausatmen</span>
-                    </div>`,
+               <span id="handbook-status-modal-kapalabhati" class="text-3xl font-semibold text-white mt-12 h-10">Stoßweise Ausatmen</span>
+             </div>`,
                     `<!-- Theorie-Inhalt Kapalabhati -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Starke Energetisierung, Reinigung der Atemwege von Schleim, Aktivierung des Geistes und Schärfung des Intellekts. Dies ist eine Reinigungsübung (Kriya).</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Mechanismus: Aktive Ausatmung, passive Einatmung. Eine Serie von kraftvollen, stoßartigen Ausatmungen durch die Nase, erzeugt durch ruckartige Kontraktion der unteren Bauchmuskeln. Die Einatmung ist passiv (Luft strömt von selbst ein, wenn der Bauch sich entspannt). Diese Stöße "wecken" den Sympathikus und reinigen die Atemwege mechanisch.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Anleitung (1 Runde)</h4>
-                    <ol class="list-decimal list-inside space-y-2">
-                    <li>Sitzen Sie aufrecht. Tief ein- und ausatmen.</li>
-                    <li>Etwa zur Hälfte einatmen, um zu beginnen.</li>
-                    <li>Beginnen Sie die Stöße: Kraftvoll durch die Nase ausatmen, Bauch zieht ruckartig ein.</li>
-                    <li>Einatmung passiv geschehen lassen.</li>
-                    <li>Tempo: ca. 1 Stoß pro Sekunde.</li>
-                    <li>Eine Runde von 20-30 Stößen durchführen.</li>
-                    <li>Danach vollständig ausatmen, tief einatmen, kurz halten und nachspüren. 2-3 Runden.</li>
-                    </ol>
-                    <p class="font-bold text-red-400 mt-4">Sicherheit: Beachten Sie die HOCHRISIKO-Kontraindikationen!</p>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Starke Energetisierung, Reinigung der Atemwege von Schleim, Aktivierung des Geistes und Schärfung des Intellekts. Dies ist eine Reinigungsübung (Kriya).</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Mechanismus: Aktive Ausatmung, passive Einatmung. Eine Serie von kraftvollen, stoßartigen Ausatmungen durch die Nase, erzeugt durch ruckartige Kontraktion der unteren Bauchmuskeln. Die Einatmung ist passiv (Luft strömt von selbst ein, wenn der Bauch sich entspannt). Diese Stöße "wecken" den Sympathikus und reinigen die Atemwege mechanisch.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Anleitung (1 Runde)</h4>
+                     <ol class="list-decimal list-inside space-y-2">
+                       <li>Sitzen Sie aufrecht. Tief ein- und ausatmen.</li>
+                       <li>Etwa zur Hälfte einatmen, um zu beginnen.</li>
+                       <li>Beginnen Sie die Stöße: Kraftvoll durch die Nase ausatmen, Bauch zieht ruckartig ein.</li>
+                       <li>Einatmung passiv geschehen lassen.</li>
+                       <li>Tempo: ca. 1 Stoß pro Sekunde.</li>
+                       <li>Eine Runde von 20-30 Stößen durchführen.</li>
+                       <li>Danach vollständig ausatmen, tief einatmen, kurz halten und nachspüren. 2-3 Runden.</li>
+                     </ol>
+                     <p class="font-bold text-red-400 mt-4">Sicherheit: Beachten Sie die HOCHRISIKO-Kontraindikationen in Abschnitt V!</p>`
                 );
                 
-                createModal(
+                handbook_createModal(
                     'modal-bhastrika', 'Bhastrika (Blasebalg)', 'orange',
                     `<!-- Praxis-Inhalt Bhastrika -->
                     <p class="text-gray-300 text-lg text-center mb-8">Aktive Einatmung, aktive Ausatmung. Kraftvoll wie ein Blasebalg.</p>
                     <div class="flex flex-col items-center justify-center h-56">
-                    <div id="handbook-visualizer-modal-bhastrika" class="visual-guide-circle bg-orange-500 opacity-70">
+                    <div id="handbook-visualizer-modal-bhastrika" class="handbook-visual-guide-circle bg-orange-500 opacity-70">
                         <span id="handbook-timer-modal-bhastrika" class="text-5xl font-bold text-white z-10">0 / 10</span>
                     </div>
-                    <span id="handbook-status-modal-bhastrika" class="text-3xl font-semibold text-white mt-12 h-10">Aktiv Ein & Aus</span>
-                    </div>`,
+               <span id="handbook-status-modal-bhastrika" class="text-3xl font-semibold text-white mt-12 h-10">Aktiv Ein & Aus</span>
+             </div>`,
                     `<!-- Theorie-Inhalt Bhastrika -->
-                    <h4 class="text-xl font-bold text-white">Primärziel</h4>
-                    <p>Maximale Energetisierung, Erhöhung des Lungenvolumens, Stärkung des Nervensystems und Lösen von Verspannungen im Zwerchfell.</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
-                    <p>Mechanismus: Aktiv aus / Aktiv ein. Sowohl Aus- als auch Einatmung sind kraftvoll, tief und gleich lang. Dies führt zu intensiver Hyperventilation und massiver Sauerstoffflutung des Gehirns. Es ist eine stärkere Sympathikus-Aktivierung als Kapalabhati. Die intensive Zwerchfellbewegung wirkt wie eine "Bauchmassage".</p>
-                    <h4 class="text-xl font-bold text-white mt-4">Anleitung (1 Runde)</h4>
-                    <ol class="list-decimal list-inside space-y-2">
-                    <li>Sitzen Sie aufrecht mit gerader Wirbelsäule.</li>
-                    <li>Beginnen Sie: Kraftvoll durch die Nase ausatmen (Bauch rein).</li>
-                    <li>Sofort danach kraftvoll durch die Nase einatmen (Bauch raus).</li>
-                    <li>Ein- und Ausatmung sind gleich lang und intensiv.</li>
-                    <li>10-20 Zyklen wiederholen.</li>
-                    <li>Runde beenden, der Stille und Energie nachspüren.</li>
-                    </ol>
-                    <p class="font-bold text-red-400 mt-4">Sicherheit: Nur morgens praktizieren. Beachten Sie die HOCHRISIKO-Kontraindikationen!</p>`
+                     <h4 class="text-xl font-bold text-white">Primärziel</h4>
+                     <p>Maximale Energetisierung, Erhöhung des Lungenvolumens, Stärkung des Nervensystems und Lösen von Verspannungen im Zwerchfell.</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Wirkmechanismus (Physiologie)</h4>
+                     <p>Mechanismus: Aktiv aus / Aktiv ein. Sowohl Aus- als auch Einatmung sind kraftvoll, tief und gleich lang. Dies führt zu intensiver Hyperventilation und massiver Sauerstoffflutung des Gehirns. Es ist eine stärkere Sympathikus-Aktivierung als Kapalabhati. Die intensive Zwerchfellbewegung wirkt wie eine "Bauchmassage".</p>
+                     <h4 class="text-xl font-bold text-white mt-4">Anleitung (1 Runde)</h4>
+                     <ol class="list-decimal list-inside space-y-2">
+                       <li>Sitzen Sie aufrecht mit gerader Wirbelsäule.</li>
+                       <li>Beginnen Sie: Kraftvoll durch die Nase ausatmen (Bauch rein).</li>
+                       <li>Sofort danach kraftvoll durch die Nase einatmen (Bauch raus).</li>
+                       <li>Ein- und Ausatmung sind gleich lang und intensiv.</li>
+                       <li>10-20 Zyklen wiederholen.</li>
+                       <li>Runde beenden, der Stille und Energie nachspüren.</li>
+                     </ol>
+                     <p class="font-bold text-red-400 mt-4">Sicherheit: Nur morgens praktizieren. Beachten Sie die HOCHRISIKO-Kontraindikationen in Abschnitt V!</p>`
                 );
+
+                // Verstecke die Start-Buttons für Modale, die sie nicht brauchen
+                document.getElementById(`handbook-praxis-footer-modal-sigh`).style.display = 'none';
+                document.getElementById(`handbook-praxis-footer-modal-zwerchfell`).style.display = 'none';
+                document.getElementById(`handbook-praxis-footer-modal-lippenbremse`).style.display = 'none';
+            }
+
+            // --- 7. HANDBUCH-START-BUTTONS VERKNÜPFEN (NEUE ROBUSTE METHODE) ---
+            function handbook_attachClickListeners() {
+                document.getElementById('start-btn-handbook-modal-478').onclick = (e) => {
+                    handbook_startBreathing(e.target, {
+                        visualizerType: 'circle', phases: [4, 7, 8], phaseNames: ['Einatmen', 'Halten', 'Ausatmen']
+                    });
+                };
+                document.getElementById('start-btn-handbook-modal-box').onclick = (e) => {
+                    handbook_startBreathing(e.target, {
+                        visualizerType: 'circle', phases: [4, 4, 4, 4], phaseNames: ['Einatmen', 'Halten', 'Ausatmen', 'Halten']
+                    });
+                };
+                document.getElementById('start-btn-handbook-modal-nadi').onclick = (e) => {
+                    handbook_startBreathing(e.target, {
+                        visualizerType: 'nadi', phases: [4, 4, 6, 4, 4, 6], phaseNames: ['Links Einatmen', 'Halten', 'Rechts Ausatmen', 'Rechts Einatmen', 'Halten', 'Links Ausatmen']
+                    });
+                };
+                document.getElementById('start-btn-handbook-modal-kapalabhati').onclick = (e) => {
+                    handbook_startBreathing(e.target, {
+                        visualizerType: 'pulse', phases: [1, 1], phaseNames: ['Ausatmen', 'Einatmen (passiv)'], totalPulses: 20, bpm: 60
+                    });
+                };
+                document.getElementById('start-btn-handbook-modal-bhramari').onclick = (e) => {
+                    handbook_startBreathing(e.target, {
+                        visualizerType: 'vibrate', phases: [5, 8], phaseNames: ['Einatmen', 'Summen (Ausatmen)']
+                    });
+                };
+                document.getElementById('start-btn-handbook-modal-bhastrika').onclick = (e) => {
+                    handbook_startBreathing(e.target, {
+                        visualizerType: 'pulse', phases: [1, 1], phaseNames: ['Ausatmen', 'Einatmen'], totalPulses: 10, bpm: 40
+                    });
+                };
             }
             
-            // Alle Modale beim Laden der Seite erstellen
-            createAllModals();
+            // --- ALLES INITIALISIEREN ---
+            handbook_createModals(); // 1. Erstelle die (versteckten) Modale
+            
+            // === HIER IST DER FEHLENDE FIX ===
+            // 2. Verknüpfe die "Start"-Buttons in den Modalen
+            // Diese Funktion wurde vorher nicht aufgerufen!
+            handbook_attachClickListeners(); 
+            // === ENDE FIX ===
 
-            // Escape-Taste schließt das Modal
+            // Schließt das Handbuch-Modal mit der Escape-Taste
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && handbookTimerStore.currentModalId) {
-                    handbook_closeModal(handbookTimerStore.currentModalId);
+                if (e.key === 'Escape' && handbook_currentModalId) {
+                    handbook_closeModal(handbook_currentModalId);
                 }
             });
 
-        }); // Ende DOMContentLoaded
+        }); // ENDE DOMCONTENTLOADED
     </script>
 </body>
 </html>
-
 
 
